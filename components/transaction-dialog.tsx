@@ -1,11 +1,9 @@
 "use client";
-
 import { useEffect, useRef } from "react";
 import { X, Save } from "lucide-react";
 import { TransactionFields } from "@/components/transaction-fields";
 import { TransactionItems } from "@/components/transaction-items";
 import type { TransactionsController } from "@/hooks/use-transactions";
-
 export function TransactionDialog({
   mode,
   setMode,
@@ -28,12 +26,10 @@ export function TransactionDialog({
 >) {
   const dialog = useRef<HTMLDialogElement>(null);
   const readonly = mode === "detail";
-
   useEffect(() => {
     if (mode) dialog.current?.showModal();
     else dialog.current?.close();
   }, [mode]);
-
   return (
     <dialog
       ref={dialog}
@@ -41,87 +37,74 @@ export function TransactionDialog({
         e.preventDefault();
         if (!busy) setMode(null);
       }}
-      className="fixed inset-0 m-auto p-0 border border-slate-200 rounded-[8px] bg-white text-slate-900 max-w-2xl w-[calc(100%-2rem)] max-h-[90vh] overflow-hidden shadow-md"
+      className="transaction-dialog"
     >
-      <form onSubmit={save} className="flex flex-col max-h-[90vh]">
-        {/* Dialog Header */}
-        <div className="py-3.5 px-5 border-b border-slate-200 bg-white flex items-center justify-between shrink-0">
+      <form onSubmit={save}>
+        <div className="dialog-heading">
           <div>
-            <h2 className="text-base sm:text-lg font-bold text-slate-900 tracking-tight">
+            <div className="eyebrow">{"TRANSAKSI BARANG"}</div>
+            <h2>
               {mode === "tambah"
-                ? "Tambah Transaksi Baru"
+                ? "Tambah transaksi"
                 : mode === "koreksi"
-                  ? "Koreksi Transaksi"
-                  : "Detail Transaksi"}
+                  ? "Koreksi transaksi"
+                  : "Detail transaksi"}
             </h2>
-            <p className="text-xs text-slate-500 mt-0.5">
+            <p>
               {readonly
-                ? "Informasi header dan rincian transaksi barang."
-                : "Lengkapi informasi umum dan daftar barang transaksi di bawah ini."}
+                ? "Informasi header dan rincian barang."
+                : "Lengkapi informasi dan rincian barang di bawah ini."}
             </p>
           </div>
           <button
             type="button"
-            className="p-1.5 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-[6px] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
-            aria-label="Tutup"
+            className="icon-button"
+            aria-label={"Tutup"}
             disabled={busy}
             onClick={() => setMode(null)}
           >
-            <X size={18} />
+            <X size={20} />
           </button>
         </div>
-
-        {/* Dialog Body */}
-        <div className="p-5 overflow-y-auto space-y-4 flex-1">
+        <div className="dialog-body">
           {formError && (
-            <div
-              role="alert"
-              className="p-3 bg-rose-50 border border-rose-200 rounded-[6px] text-xs text-rose-800"
-            >
+            <div className="alert error" role="alert">
               {formError}
             </div>
           )}
-
-          <fieldset disabled={busy || readonly} className="border-0 p-0 m-0 space-y-4">
+          <fieldset disabled={busy || readonly}>
             <TransactionFields form={form} setForm={setForm} mode={mode} />
             <TransactionItems
               form={form}
               setForm={setForm}
               barang={barang}
               readonly={readonly}
-            />
+            />{" "}
           </fieldset>
-
-          <p className="text-[11px] text-slate-500 pt-1">
-            * QTY menggunakan satuan masing-masing barang. Satu kode barang hanya dapat dipilih sekali per transaksi.
+          <p className="helper">
+            {
+              "QTY menggunakan satuan masing-masing barang. Satu barang hanya dapat dipilih sekali."
+            }
           </p>
         </div>
-
-        {/* Dialog Footer */}
-        <div className="py-3 px-5 border-t border-slate-200 bg-slate-50 flex items-center justify-between shrink-0">
-          <span className="text-xs text-slate-500 font-medium">
-            {form.items.length} item terdaftar
+        <div className="dialog-footer">
+          <span>
+            {form.items.length} {"item barang"}
           </span>
-          <div className="flex items-center gap-2">
-            <button
-              type="button"
-              className="px-3.5 py-1.5 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-[6px] hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 transition-colors cursor-pointer"
-              disabled={busy}
-              onClick={() => setMode(null)}
-            >
-              {readonly ? "Tutup" : "Batal"}
+          <button
+            type="button"
+            className="secondary"
+            disabled={busy}
+            onClick={() => setMode(null)}
+          >
+            {readonly ? "Tutup" : "Batal"}
+          </button>
+          {!readonly && (
+            <button className="primary" type="submit" disabled={busy}>
+              <Save size={17} />
+              {busy ? "Menyimpan…" : "Simpan Transaksi"}
             </button>
-            {!readonly && (
-              <button
-                type="submit"
-                disabled={busy}
-                className="inline-flex items-center gap-1.5 px-4 py-1.5 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-[6px] shadow-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-1 transition-colors disabled:opacity-50 cursor-pointer"
-              >
-                <Save size={15} />
-                <span>{busy ? "Menyimpan…" : "Simpan Transaksi"}</span>
-              </button>
-            )}
-          </div>
+          )}
         </div>
       </form>
     </dialog>
