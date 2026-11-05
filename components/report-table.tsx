@@ -1,8 +1,10 @@
 "use client";
+
 import { REPORT_TABS, REPORT_COLUMNS, REPORT_LABELS } from "@/data";
 import { TableProperties } from "lucide-react";
 import { formatTanggal } from "@/lib/client";
 import type { ReportsController } from "@/hooks/use-reports";
+
 export function ReportTable({
   tab,
   period,
@@ -10,92 +12,124 @@ export function ReportTable({
   loading,
   error,
 }: Pick<ReportsController, "tab" | "period" | "data" | "loading" | "error">) {
+  const currentTabLabel = REPORT_TABS.find((t) => t.key === tab)?.label;
+  const itemsCount = data?.[tab].length ?? 0;
+
   return (
-    <section className="card" role="tabpanel">
-      <div className="card-heading">
+    <section
+      className="bg-white border border-slate-200 rounded-[8px] overflow-hidden"
+      role="tabpanel"
+    >
+      {/* Table Header Info */}
+      <div className="px-4 py-3 border-b border-slate-200 flex items-center justify-between gap-4">
         <div>
-          <h2>{REPORT_TABS.find((t) => t.key === tab)?.label}</h2>
-          <p>
-            {formatTanggal(period.awal)} {"—"} {formatTanggal(period.akhir)}
+          <h2 className="text-sm font-semibold text-slate-900 inline-flex items-center gap-2">
+            <span>{currentTabLabel}</span>
+            <span className="px-2 py-0.5 text-xs font-medium bg-slate-100 text-slate-700 rounded-[4px] border border-slate-200 tabular-nums">
+              {itemsCount} {tab === "kelompok" ? "kelompok" : "barang"}
+            </span>
+          </h2>
+          <p className="text-xs text-slate-500 mt-0.5">
+            Periode: {formatTanggal(period.awal)} — {formatTanggal(period.akhir)}
           </p>
         </div>
-        <span className="category">
-          {data?.[tab].length ?? 0} {tab === "kelompok" ? "kelompok" : "barang"}
-        </span>
       </div>
+
       {tab === "tertinggi" && (
-        <p className="report-explanation">
-          {
-            "Barang dengan total pengeluaran tertinggi pada setiap kategori dan satuan. Seluruh nilai seri ditampilkan; kelompok tanpa pengeluaran dikecualikan."
-          }
-        </p>
+        <div className="px-4 py-2 bg-slate-50 border-b border-slate-200 text-xs text-slate-600">
+          Barang dengan total pengeluaran tertinggi pada setiap kategori dan satuan. Seluruh nilai seri ditampilkan; kelompok tanpa pengeluaran dikecualikan.
+        </div>
       )}
-      <div className="table-wrap">
-        <table>
-          <thead>
+
+      {/* Horizontal Scroll Table */}
+      <div className="overflow-x-auto">
+        <table className="w-full text-left text-[14px] text-slate-700 whitespace-nowrap">
+          <thead className="bg-slate-50 border-b border-slate-200 text-xs font-semibold text-slate-600 uppercase tracking-wider">
             <tr>
               {REPORT_COLUMNS[tab].map((c) => (
                 <th
                   key={c}
-                  className={
-                    c.startsWith("TRANS_") || c === "STOK_AKHIR" ? "right" : ""
-                  }
+                  className={`py-3 px-4 ${
+                    c.startsWith("TRANS_") || c === "STOK_AKHIR"
+                      ? "text-right"
+                      : ""
+                  }`}
                 >
                   {REPORT_LABELS[c]}
                 </th>
               ))}
             </tr>
           </thead>
-          <tbody>
+          <tbody className="divide-y divide-slate-200 bg-white">
             {data?.[tab].map((r, i) => (
-              <tr key={i}>
-                {REPORT_COLUMNS[tab].map((c) => (
-                  <td
-                    key={c}
-                    className={
-                      c === "STOK_AKHIR"
-                        ? "right stock"
-                        : c.startsWith("TRANS_")
-                          ? "right"
-                          : c === "KODE_BARANG"
-                            ? "code"
-                            : ""
-                    }
-                  >
-                    {c.startsWith("TRANS_") || c === "STOK_AKHIR"
-                      ? BigInt(r[c]).toLocaleString("id-ID")
-                      : r[c]}
-                  </td>
-                ))}
+              <tr key={i} className="hover:bg-slate-50/75 transition-colors">
+                {REPORT_COLUMNS[tab].map((c) => {
+                  const isNumber = c.startsWith("TRANS_") || c === "STOK_AKHIR";
+                  const isStockEnd = c === "STOK_AKHIR";
+                  const isCode = c === "KODE_BARANG";
+
+                  return (
+                    <td
+                      key={c}
+                      className={`py-3 px-4 text-[14px] ${
+                        isNumber ? "text-right tabular-nums" : ""
+                      } ${
+                        isStockEnd
+                          ? "font-semibold text-slate-900 bg-slate-50/50"
+                          : isCode
+                            ? "font-mono font-semibold text-slate-900"
+                            : "text-slate-700"
+                      }`}
+                    >
+                      {isNumber
+                        ? BigInt(r[c]).toLocaleString("id-ID")
+                        : r[c]}
+                    </td>
+                  );
+                })}
               </tr>
             ))}
           </tbody>
         </table>
-        {loading ? (
-          <div className="empty">{"Menghitung laporan…"}</div>
-        ) : !data?.[tab].length ? (
-          <div className="empty">
-            <TableProperties size={30} />
-            <h3>
+
+        {/* Loading State */}
+        {loading && (
+          <div className="py-12 text-center text-sm text-slate-500">
+            Menghitung laporan…
+          </div>
+        )}
+
+        {/* Empty State */}
+        {!loading && !itemsCount && (
+          <div className="py-12 px-4 text-center">
+            <TableProperties
+              size={28}
+              className="mx-auto text-slate-400 mb-2"
+            />
+            <h3 className="text-sm font-semibold text-slate-900">
               {error
                 ? "Laporan belum tersedia"
                 : "Tidak ada data untuk periode ini"}
             </h3>
-            <p>
+            <p className="text-xs text-slate-500 mt-1 max-w-sm mx-auto">
               {error
                 ? "Periksa koneksi database dan coba tampilkan kembali."
                 : "Pilih periode lain atau tambahkan transaksi barang."}
             </p>
           </div>
-        ) : null}
+        )}
       </div>
-      <div className="table-footer">
-        {tab === "barang"
-          ? "Termasuk barang tanpa transaksi"
-          : tab === "kelompok"
-            ? "Dikelompokkan berdasarkan kategori dan satuan"
-            : "Peringkat berdasarkan total QTY keluar"}
-        <span>{"Periode inklusif"}</span>
+
+      {/* Table Footer */}
+      <div className="py-2.5 px-4 bg-slate-50 border-t border-slate-200 flex items-center justify-between text-xs text-slate-500">
+        <span>
+          {tab === "barang"
+            ? "Termasuk master barang tanpa transaksi"
+            : tab === "kelompok"
+              ? "Dikelompokkan berdasarkan kategori dan satuan"
+              : "Peringkat berdasarkan total QTY keluar"}
+        </span>
+        <span className="hidden sm:inline">Periode inklusif</span>
       </div>
     </section>
   );
