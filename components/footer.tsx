@@ -1,11 +1,9 @@
 "use client";
-import { UI } from "@/data";
-
 export function Footer() {
   return (
     <footer>
-      {UI.ptIndospringTbk}
-      <span>{UI.sistemTransaksiBarangV10}</span>
+      {"PT Indospring Tbk."}
+      <span>{"Sistem Transaksi Barang · v1.0"}</span>
     </footer>
   );
 }

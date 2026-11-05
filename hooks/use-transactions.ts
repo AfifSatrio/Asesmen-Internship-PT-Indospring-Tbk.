@@ -1,23 +1,14 @@
 "use client";
-import {
-  DEFAULT_TRANSACTION,
-  LOCALIZATION,
-  API_ROUTES,
-  MESSAGES,
-} from "@/data";
-
-import { UI } from "@/data";
-
 import { useEffect, useRef, useState } from "react";
 import { api, type Barang, type Transaksi } from "@/lib/client";
 import { type InputTransaksi, transaksiSchema } from "@/lib/validation";
 const kosong = (): InputTransaksi => ({
   nomor: "",
-  tanggal: new Date().toLocaleDateString(LOCALIZATION.dateInputLocale, {
-    timeZone: LOCALIZATION.timeZone,
+  tanggal: new Date().toLocaleDateString("en-CA", {
+    timeZone: "Asia/Jakarta",
   }),
-  jenis: DEFAULT_TRANSACTION.jenis,
-  kategori: DEFAULT_TRANSACTION.kategori,
+  jenis: "MASUK",
+  kategori: "SUBMAT",
   items: [],
 });
 export function useTransactions() {
@@ -40,8 +31,8 @@ export function useTransactions() {
     setError("");
     try {
       const [a, b] = await Promise.all([
-        api<Transaksi[]>(API_ROUTES.transaksi),
-        api<Barang[]>(API_ROUTES.barang),
+        api<Transaksi[]>("/api/transaksi"),
+        api<Barang[]>("/api/barang"),
       ]);
       setData(a);
       setBarang(b);
@@ -86,7 +77,7 @@ export function useTransactions() {
           ),
       )
     ) {
-      setFormError(UI.barangHarusSesuaiKategoriTransaksi);
+      setFormError("Barang harus sesuai kategori transaksi.");
       return;
     }
     saving.current = true;
@@ -94,14 +85,16 @@ export function useTransactions() {
     try {
       await api(
         mode === "koreksi"
-          ? API_ROUTES.transaksiDetail(form.nomor)
-          : API_ROUTES.transaksi,
+          ? `/api/transaksi/${encodeURIComponent(form.nomor)}`
+          : "/api/transaksi",
         {
           method: mode === "koreksi" ? "PUT" : "POST",
           body: JSON.stringify(parsed.data),
         },
       );
-      setSuccess(MESSAGES.saved(form.nomor, mode === "koreksi"));
+      setSuccess(
+        `Transaksi ${form.nomor} berhasil ${mode === "koreksi" ? "dikoreksi" : "ditambahkan"}.`,
+      );
       setMode(null);
       await load();
     } catch (e) {
@@ -112,15 +105,21 @@ export function useTransactions() {
     }
   }
   async function remove(t: Transaksi) {
-    if (saving.current || !confirm(MESSAGES.confirmDelete(t.nomor))) return;
+    if (
+      saving.current ||
+      !confirm(
+        `Hapus transaksi ${t.nomor} beserta seluruh item? Tindakan ini tidak dapat dibatalkan.`,
+      )
+    )
+      return;
     saving.current = true;
     setBusy(true);
     setSuccess("");
     try {
-      await api(API_ROUTES.transaksiDetail(t.nomor), {
+      await api(`/api/transaksi/${encodeURIComponent(t.nomor)}`, {
         method: "DELETE",
       });
-      setSuccess(MESSAGES.deleted(t.nomor));
+      setSuccess(`Transaksi ${t.nomor} berhasil dihapus.`);
       await load();
     } catch (e) {
       setError((e as Error).message);

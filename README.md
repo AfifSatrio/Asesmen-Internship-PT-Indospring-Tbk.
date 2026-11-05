@@ -68,10 +68,10 @@ Folder `.local` tidak disertakan Git. Pada clone baru, tetap gunakan instalasi P
 
 ## Database dan SQL
 
-| Tabel | Kunci | Isi |
-| --- | --- | --- |
-| `MSBARANG` | `KODE_BARANG` | Master barang |
-| `TRMUTASIHD` | `NO_TRANSAKSI` | Header transaksi |
+| Tabel        | Kunci                         | Isi                   |
+| ------------ | ----------------------------- | --------------------- |
+| `MSBARANG`   | `KODE_BARANG`                 | Master barang         |
+| `TRMUTASIHD` | `NO_TRANSAKSI`                | Header transaksi      |
 | `TRMUTASIDT` | `(NO_TRANSAKSI, KODE_BARANG)` | Detail barang dan QTY |
 
 Nama tabel/kolom uppercase sesuai soal dan harus dikutip dengan `"` di PostgreSQL. Tipe varchar, integer, dan date mengikuti soal. `prisma/schema.prisma` menggunakan `@map`/`@@map`. Constraint CHECK jenis transaksi, kategori, dan QTY ada pada `sql/schema.sql`; Prisma tidak merepresentasikan CHECK. Konsistensi kategori header/detail dan minimal satu item divalidasi oleh API dalam transaksi database.
@@ -82,23 +82,23 @@ Jawaban SQL mandiri nomor **3.1, 3.2, 3.3** ada di [`sql/reports.sql`](sql/repor
 
 Masukkan lima transaksi ini **melalui form**:
 
-| Nomor | Tanggal | Jenis | Kategori | Item (QTY) |
-| --- | --- | --- | --- | --- |
-| T001 | 2021-01-01 | MASUK | SUBMAT | S001 (10), S002 (4), S003 (6) |
-| T002 | 2021-01-05 | KELUAR | SUBMAT | S001 (4), S002 (1), S003 (2) |
-| T003 | 2021-02-10 | MASUK | SUBMAT | S002 (6), S003 (2) |
-| T004 | 2021-01-10 | MASUK | RAWMAT | R001 (10), R002 (5) |
-| T005 | 2021-01-25 | KELUAR | RAWMAT | R001 (5) |
+| Nomor | Tanggal    | Jenis  | Kategori | Item (QTY)                    |
+| ----- | ---------- | ------ | -------- | ----------------------------- |
+| T001  | 2021-01-01 | MASUK  | SUBMAT   | S001 (10), S002 (4), S003 (6) |
+| T002  | 2021-01-05 | KELUAR | SUBMAT   | S001 (4), S002 (1), S003 (2)  |
+| T003  | 2021-02-10 | MASUK  | SUBMAT   | S002 (6), S003 (2)            |
+| T004  | 2021-01-10 | MASUK  | RAWMAT   | R001 (10), R002 (5)           |
+| T005  | 2021-01-25 | KELUAR | RAWMAT   | R001 (5)                      |
 
 Hasil periode 2021-01-01 sampai 2021-02-28:
 
 | Kode | Masuk | Keluar | Stok akhir |
-| --- | ---: | ---: | ---: |
-| S001 | 10 | 4 | 6 |
-| S002 | 10 | 1 | 9 |
-| S003 | 8 | 2 | 6 |
-| R001 | 10 | 5 | 5 |
-| R002 | 5 | 0 | 5 |
+| ---- | ----: | -----: | ---------: |
+| S001 |    10 |      4 |          6 |
+| S002 |    10 |      1 |          9 |
+| S003 |     8 |      2 |          6 |
+| R001 |    10 |      5 |          5 |
+| R002 |     5 |      0 |          5 |
 
 Kelompok: SUBMAT–BOX = **6**, SUBMAT–PCS = **15**, RAWMAT–KG = **10**. Pengeluaran tertinggi: S001 = **4**, S003 = **2**, R001 = **5**.
 
@@ -157,12 +157,6 @@ docs/screenshots/    Bukti tampilan dari pengujian browser
 
 Referensi implementasi: [Next.js Route Handlers](https://nextjs.org/docs/app/getting-started/route-handlers), [Prisma 6 Transactions](https://www.prisma.io/docs/orm/v6/prisma-client/queries/transactions).
 
-## Data statis aplikasi
-
-Seluruh teks UI, pesan validasi/notifikasi, metadata, navigasi, opsi jenis transaksi/kategori, batas input, konfigurasi bahasa, dan periode default dikelola di **`data/index.ts`**. Komponen, hooks, dan backend mengimpor konstanta yang sama melalui `@/data`. File ini tidak mengimpor React, Prisma, atau kredensial sehingga aman dipakai bersama oleh client dan server.
-
-Data barang dan transaksi tetap di PostgreSQL. `sql/master-data.sql` tetap menjadi script pengisian master yang diwajibkan soal; SQL schema/laporan dan fixture pengujian dipertahankan sebagai artefak mandiri. Identitas field database, markup, class CSS, dan logika program bukan konten statis UI.
-
 ## Komponen UI
 
 Setiap komponen UI berada dalam file `.tsx` tersendiri langsung di folder `components/`, misalnya `components/sidebar.tsx`, `components/transaction-dialog.tsx`, dan `components/report-table.tsx`. Impor komponen langsung dari file tersebut:
@@ -171,4 +165,4 @@ Setiap komponen UI berada dalam file `.tsx` tersendiri langsung di folder `compo
 import { TransactionDialog } from "@/components/transaction-dialog";
 ```
 
-`data/index.ts` khusus untuk data statis dan konstanta bersama, bukan definisi komponen UI.
+Teks dan pengaturan tampilan berada pada komponen atau hook terkait. Batas input, kategori, dan jenis transaksi bersama didefinisikan di `lib/validation.ts` agar frontend dan backend tetap konsisten.

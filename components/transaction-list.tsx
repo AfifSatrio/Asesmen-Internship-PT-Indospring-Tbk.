@@ -1,8 +1,4 @@
 "use client";
-import { TRANSACTION_KIND, MESSAGES } from "@/data";
-
-import { UI } from "@/data";
-
 import {
   RefreshCw,
   ArrowDownLeft,
@@ -46,14 +42,14 @@ export function TransactionList({
       <div className="card-heading">
         <div>
           <h2>
-            {UI.daftarTransaksi}
+            {"Daftar transaksi"}
             <span className="count">{data.length}</span>
           </h2>
-          <p>{UI.riwayatPencatatanBarangDalamSatuTempat}</p>
+          <p>{"Riwayat pencatatan barang dalam satu tempat."}</p>
         </div>
         <button
           className="icon-button"
-          aria-label={UI.muatUlang}
+          aria-label={"Muat ulang"}
           onClick={load}
           disabled={loading}
         >
@@ -70,12 +66,12 @@ export function TransactionList({
         <table>
           <thead>
             <tr>
-              <th>{UI.noTransaksi}</th>
-              <th>{UI.tanggal}</th>
-              <th>{UI.jenisTransaksi}</th>
-              <th>{UI.kategori}</th>
-              <th>{UI.jumlahItem}</th>
-              <th className="right">{UI.tindakan}</th>
+              <th>{"No. transaksi"}</th>
+              <th>{"Tanggal"}</th>
+              <th>{"Jenis transaksi"}</th>
+              <th>{"Kategori"}</th>
+              <th>{"Jumlah item"}</th>
+              <th className="right">{"Tindakan"}</th>
             </tr>
           </thead>
           <tbody>
@@ -85,43 +81,41 @@ export function TransactionList({
                 <td>{formatTanggal(t.tanggal)}</td>
                 <td>
                   <span
-                    className={`badge ${t.jenis === TRANSACTION_KIND.masuk ? "in" : "out"}`}
+                    className={`badge ${t.jenis === "MASUK" ? "in" : "out"}`}
                   >
-                    {t.jenis === TRANSACTION_KIND.masuk ? (
+                    {t.jenis === "MASUK" ? (
                       <ArrowDownLeft size={14} />
                     ) : (
                       <ArrowUpRight size={14} />
                     )}{" "}
-                    {t.jenis === TRANSACTION_KIND.masuk
-                      ? UI.masukLabel
-                      : UI.keluarLabel}
+                    {t.jenis === "MASUK" ? "Masuk" : "Keluar"}
                   </span>
                 </td>
                 <td>
                   <span className="category">{t.kategori}</span>
                 </td>
-                <td>{MESSAGES.itemCount(t.items.length)}</td>
+                <td>{`${t.items.length} barang`}</td>
                 <td>
                   <div className="actions">
                     <button
-                      title={UI.lihatDetail}
-                      aria-label={MESSAGES.detailLabel(t.nomor)}
+                      title={"Lihat detail"}
+                      aria-label={`Detail ${t.nomor}`}
                       onClick={() => open("detail", t)}
                     >
                       <Eye size={17} />
                     </button>
                     <button
-                      title={UI.koreksi}
-                      aria-label={MESSAGES.editLabel(t.nomor)}
+                      title={"Koreksi"}
+                      aria-label={`Koreksi ${t.nomor}`}
                       onClick={() => open("koreksi", t)}
                       disabled={busy}
                     >
                       <Pencil size={16} />
                     </button>
                     <button
-                      title={UI.hapus}
+                      title={"Hapus"}
                       className="danger-text"
-                      aria-label={MESSAGES.deleteLabel(t.nomor)}
+                      aria-label={`Hapus ${t.nomor}`}
                       onClick={() => remove(t)}
                       disabled={busy}
                     >
@@ -134,26 +128,26 @@ export function TransactionList({
           </tbody>
         </table>
         {loading ? (
-          <div className="empty">{UI.memuatTransaksi}</div>
+          <div className="empty">{"Memuat transaksi…"}</div>
         ) : visible.length === 0 ? (
           <div className="empty">
             <Package size={32} />
             <h3>
               {search || jenis
-                ? UI.transaksiTidakDitemukan
-                : UI.belumAdaTransaksi}
+                ? "Transaksi tidak ditemukan"
+                : "Belum ada transaksi"}
             </h3>
             <p>
               {search || jenis
-                ? UI.cobaUbahPencarianAtauFilter
-                : UI.mulaiDenganMenambahkanTransaksiBarangPertama}
+                ? "Coba ubah pencarian atau filter."
+                : "Mulai dengan menambahkan transaksi barang pertama."}
             </p>
           </div>
         ) : null}
       </div>
       <div className="table-footer">
-        {MESSAGES.transactionCount(visible.length, data.length)}
-        <span>{UI.dataTersimpanDiDatabase}</span>
+        {`Menampilkan ${visible.length} dari ${data.length} transaksi`}
+        <span>{"Data tersimpan di database"}</span>
       </div>
     </section>
   );

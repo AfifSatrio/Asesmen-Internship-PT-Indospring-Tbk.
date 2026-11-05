@@ -1,8 +1,10 @@
 "use client";
-import { LIMITS, TRANSACTION_OPTIONS, CATEGORIES } from "@/data";
-
-import { UI } from "@/data";
-
+import { LIMITS } from "@/lib/validation";
+const TRANSACTION_OPTIONS = [
+  { value: "MASUK", label: "MASUK — Barang masuk" },
+  { value: "KELUAR", label: "KELUAR — Barang keluar" },
+] as const;
+import { CATEGORIES } from "@/lib/validation";
 import type { TransactionsController } from "@/hooks/use-transactions";
 import type { InputTransaksi } from "@/lib/validation";
 export function TransactionFields({
@@ -13,20 +15,20 @@ export function TransactionFields({
   return (
     <div className="form-grid">
       <label>
-        {UI.noTransaksi}
-        <span>{UI.requiredMark}</span>
+        {"No. transaksi"}
+        <span>{"*"}</span>
         <input
           required
           maxLength={LIMITS.codeLength}
-          placeholder={UI.contohT001}
+          placeholder={"Contoh: T001"}
           value={form.nomor}
           disabled={mode === "koreksi"}
           onChange={(e) => setForm({ ...form, nomor: e.target.value })}
         />
       </label>
       <label>
-        {UI.tanggal}
-        <span>{UI.requiredMark}</span>
+        {"Tanggal"}
+        <span>{"*"}</span>
         <input
           type="date"
           required
@@ -35,8 +37,8 @@ export function TransactionFields({
         />
       </label>
       <label>
-        {UI.jenisTransaksi}
-        <span>{UI.requiredMark}</span>
+        {"Jenis transaksi"}
+        <span>{"*"}</span>
         <select
           value={form.jenis}
           onChange={(e) =>
@@ -54,14 +56,16 @@ export function TransactionFields({
         </select>
       </label>
       <label>
-        {UI.kategori}
-        <span>{UI.requiredMark}</span>
+        {"Kategori"}
+        <span>{"*"}</span>
         <select
           value={form.kategori}
           onChange={(e) => {
             if (
               !form.items.length ||
-              confirm(UI.mengubahKategoriAkanMengosongkanSeluruhItemLanjutkan)
+              confirm(
+                "Mengubah kategori akan mengosongkan seluruh item. Lanjutkan?",
+              )
             )
               setForm({
                 ...form,

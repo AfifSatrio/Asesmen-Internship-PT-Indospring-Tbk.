@@ -1,8 +1,5 @@
 "use client";
-import { LIMITS, MESSAGES } from "@/data";
-
-import { UI } from "@/data";
-
+import { LIMITS } from "@/lib/validation";
 import { Plus, Trash2, Package } from "lucide-react";
 import type { TransactionsController } from "@/hooks/use-transactions";
 export function TransactionItems({
@@ -18,7 +15,7 @@ export function TransactionItems({
       {" "}
       <div className="items-heading">
         <h3>
-          {UI.rincianBarang} <span className="count">{form.items.length}</span>
+          {"Rincian barang"} <span className="count">{form.items.length}</span>
         </h3>
         {!readonly && (
           <button
@@ -32,7 +29,7 @@ export function TransactionItems({
             }
           >
             <Plus size={15} />
-            {UI.tambahItem}
+            {"Tambah Item"}
           </button>
         )}
       </div>
@@ -40,10 +37,10 @@ export function TransactionItems({
         <table>
           <thead>
             <tr>
-              <th>{UI.kodeBarang}</th>
-              <th>{UI.namaBarang}</th>
-              <th>{UI.satuan}</th>
-              <th>{UI.qty}</th>
+              <th>{"Kode barang"}</th>
+              <th>{"Nama barang"}</th>
+              <th>{"Satuan"}</th>
+              <th>{"QTY"}</th>
               {!readonly && <th />}
             </tr>
           </thead>
@@ -54,7 +51,7 @@ export function TransactionItems({
                 <tr key={index}>
                   <td>
                     <select
-                      aria-label={MESSAGES.itemLabel(index + 1)}
+                      aria-label={`Barang ${index + 1}`}
                       required
                       value={item.kode}
                       onChange={(e) =>
@@ -66,7 +63,7 @@ export function TransactionItems({
                         })
                       }
                     >
-                      <option value="">{UI.pilihBarang}</option>
+                      <option value="">{"Pilih barang"}</option>
                       {barang
                         .filter((b) => b.kategori === form.kategori)
                         .sort((a, b) => a.kode.localeCompare(b.kode))
@@ -83,11 +80,11 @@ export function TransactionItems({
                         ))}
                     </select>
                   </td>
-                  <td>{b?.nama || UI.emptyValue}</td>
-                  <td>{b?.satuan || UI.emptyValue}</td>
+                  <td>{b?.nama || "—"}</td>
+                  <td>{b?.satuan || "—"}</td>
                   <td>
                     <input
-                      aria-label={MESSAGES.quantityLabel(index + 1)}
+                      aria-label={`QTY ${index + 1}`}
                       type="number"
                       required
                       min={LIMITS.minQuantity}
@@ -111,7 +108,7 @@ export function TransactionItems({
                       <button
                         type="button"
                         className="icon-button danger-text"
-                        aria-label={MESSAGES.deleteItemLabel(index + 1)}
+                        aria-label={`Hapus item ${index + 1}`}
                         onClick={() =>
                           setForm({
                             ...form,
@@ -131,7 +128,7 @@ export function TransactionItems({
         {!form.items.length && (
           <div className="empty">
             <Package size={28} />
-            <p>{UI.belumAdaItemKlikTambahItemUntuk}</p>
+            <p>{"Belum ada item. Klik Tambah Item untuk memilih barang."}</p>
           </div>
         )}
       </div>

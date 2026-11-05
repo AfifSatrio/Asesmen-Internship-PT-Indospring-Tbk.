@@ -1,6 +1,4 @@
 "use client";
-import { UI } from "@/data";
-
 import { useEffect, useRef } from "react";
 import { X, Save } from "lucide-react";
 import { TransactionFields } from "@/components/transaction-fields";
@@ -44,24 +42,24 @@ export function TransactionDialog({
       <form onSubmit={save}>
         <div className="dialog-heading">
           <div>
-            <div className="eyebrow">{UI.transaksiBarangEyebrow}</div>
+            <div className="eyebrow">{"TRANSAKSI BARANG"}</div>
             <h2>
               {mode === "tambah"
-                ? UI.tambahTransaksi
+                ? "Tambah transaksi"
                 : mode === "koreksi"
-                  ? UI.koreksiTransaksi
-                  : UI.detailTransaksi}
+                  ? "Koreksi transaksi"
+                  : "Detail transaksi"}
             </h2>
             <p>
               {readonly
-                ? UI.informasiHeaderDanRincianBarang
-                : UI.lengkapiInformasiDanRincianBarangDiBawah}
+                ? "Informasi header dan rincian barang."
+                : "Lengkapi informasi dan rincian barang di bawah ini."}
             </p>
           </div>
           <button
             type="button"
             className="icon-button"
-            aria-label={UI.tutup}
+            aria-label={"Tutup"}
             disabled={busy}
             onClick={() => setMode(null)}
           >
@@ -84,12 +82,14 @@ export function TransactionDialog({
             />{" "}
           </fieldset>
           <p className="helper">
-            {UI.qtyMenggunakanSatuanMasingMasingBarangSatu}
+            {
+              "QTY menggunakan satuan masing-masing barang. Satu barang hanya dapat dipilih sekali."
+            }
           </p>
         </div>
         <div className="dialog-footer">
           <span>
-            {form.items.length} {UI.itemBarang}
+            {form.items.length} {"item barang"}
           </span>
           <button
             type="button"
@@ -97,12 +97,12 @@ export function TransactionDialog({
             disabled={busy}
             onClick={() => setMode(null)}
           >
-            {readonly ? UI.tutup : UI.batal}
+            {readonly ? "Tutup" : "Batal"}
           </button>
           {!readonly && (
             <button className="primary" type="submit" disabled={busy}>
               <Save size={17} />
-              {busy ? UI.menyimpan : UI.simpanTransaksi}
+              {busy ? "Menyimpan…" : "Simpan Transaksi"}
             </button>
           )}
         </div>

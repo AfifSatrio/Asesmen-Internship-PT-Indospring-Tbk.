@@ -1,7 +1,9 @@
 "use client";
-import { UI } from "@/data";
-
-import { REPORT_TABS } from "@/data";
+export const REPORT_TABS = [
+  { key: "barang", label: "Stok per barang", icon: "table" },
+  { key: "kelompok", label: "Stok per kelompok", icon: "layers" },
+  { key: "tertinggi", label: "Pengeluaran tertinggi", icon: "trophy" },
+] as const;
 import { ReportIcon } from "@/components/report-icon";
 import type { ReportsController } from "@/hooks/use-reports";
 export function ReportTabs({
@@ -9,7 +11,7 @@ export function ReportTabs({
   setTab,
 }: Pick<ReportsController, "tab" | "setTab">) {
   return (
-    <div className="report-tabs" role="tablist" aria-label={UI.jenisLaporan}>
+    <div className="report-tabs" role="tablist" aria-label={"Jenis laporan"}>
       {REPORT_TABS.map((t) => (
         <button
           key={t.key}

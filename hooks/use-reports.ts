@@ -1,13 +1,9 @@
 "use client";
-import { REPORT_TABS, API_ROUTES } from "@/data";
-
-import { UI } from "@/data";
-
+const DEFAULT_PERIOD = { awal: "2021-01-01", akhir: "2021-02-28" };
 import { useEffect, useState } from "react";
 import { api } from "@/lib/client";
 import { periodeSchema } from "@/lib/validation";
 import type { Reports } from "@/types/reports";
-import { DEFAULT_PERIOD } from "@/data";
 export function useReports() {
   const [awal, setAwal] = useState(DEFAULT_PERIOD.awal),
     [akhir, setAkhir] = useState(DEFAULT_PERIOD.akhir),
@@ -16,7 +12,7 @@ export function useReports() {
       akhir: DEFAULT_PERIOD.akhir,
     });
   const [data, setData] = useState<Reports | null>(null),
-    [tab, setTab] = useState<keyof Reports>(REPORT_TABS[0].key),
+    [tab, setTab] = useState<keyof Reports>("barang"),
     [loading, setLoading] = useState(true),
     [error, setError] = useState("");
   async function load(a: string, b: string) {
@@ -29,7 +25,11 @@ export function useReports() {
     setLoading(true);
     setData(null);
     try {
-      setData(await api<Reports>(API_ROUTES.laporan(a, b)));
+      setData(
+        await api<Reports>(
+          `/api/laporan?${new URLSearchParams({ awal: a, akhir: b })}`,
+        ),
+      );
       setPeriod({ awal: a, akhir: b });
     } catch (e) {
       setError((e as Error).message);

@@ -1,6 +1,4 @@
 "use client";
-import { UI } from "@/data";
-
 import { CalendarDays, ArrowRight, Search } from "lucide-react";
 import type { ReportsController } from "@/hooks/use-reports";
 export function ReportPeriodFilter({
@@ -19,8 +17,8 @@ export function ReportPeriodFilter({
       <div className="period-title">
         <CalendarDays size={20} />
         <div>
-          <h2>{UI.periodeLaporan}</h2>
-          <p>{UI.tanggalAwalDanAkhirTermasukDalamPerhitungan}</p>
+          <h2>{"Periode laporan"}</h2>
+          <p>{"Tanggal awal dan akhir termasuk dalam perhitungan."}</p>
         </div>
       </div>
       <form
@@ -31,7 +29,7 @@ export function ReportPeriodFilter({
         }}
       >
         <label>
-          {UI.tanggalAwal}
+          {"Tanggal awal"}
           <input
             type="date"
             required
@@ -41,7 +39,7 @@ export function ReportPeriodFilter({
         </label>
         <ArrowRight size={17} />
         <label>
-          {UI.tanggalAkhir}
+          {"Tanggal akhir"}
           <input
             type="date"
             required
@@ -51,7 +49,7 @@ export function ReportPeriodFilter({
         </label>
         <button className="primary" disabled={loading}>
           <Search size={17} />
-          {loading ? UI.memuat : UI.tampilkanLaporan}
+          {loading ? "Memuat…" : "Tampilkan Laporan"}
         </button>
       </form>
     </section>

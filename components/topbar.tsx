@@ -1,17 +1,15 @@
 "use client";
-import { UI } from "@/data";
-
 import { PanelLeft } from "lucide-react";
 export function Topbar() {
   return (
     <header className="topbar">
       <span>
         <PanelLeft size={17} />
-        {UI.sistemPencatatanBarang}
+        {"Sistem Pencatatan Barang"}
       </span>
       <span className="assessment">
-        {UI.itSoftware}
-        <span className="avatar">{UI.is}</span>
+        {"IT SOFTWARE"}
+        <span className="avatar">{"IS"}</span>
       </span>
     </header>
   );

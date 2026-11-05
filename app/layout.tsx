@@ -1,4 +1,8 @@
-import { APP_METADATA, LOCALIZATION } from "@/data";
+const APP_METADATA = {
+  title: "Transaksi Barang | Indospring",
+  description:
+    "Pencatatan transaksi barang masuk, keluar, dan laporan stok PT Indospring Tbk.",
+};
 import type { Metadata } from "next";
 import { Shell } from "@/components/shell";
 import "./globals.css";
@@ -9,7 +13,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang={LOCALIZATION.language}>
+    <html lang={"id"}>
       <body>
         <Shell>{children}</Shell>
       </body>

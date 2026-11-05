@@ -1,8 +1,4 @@
 "use client";
-import { TRANSACTION_KIND } from "@/data";
-
-import { UI } from "@/data";
-
 import { ArrowLeftRight, ArrowDownLeft, ArrowUpRight } from "lucide-react";
 import type { Transaksi } from "@/lib/client";
 export function TransactionStats({
@@ -19,9 +15,9 @@ export function TransactionStats({
           <ArrowLeftRight />
         </span>
         <div>
-          <p>{UI.totalTransaksi}</p>
-          <strong>{loading ? UI.emptyValue : data.length}</strong>
-          <small>{UI.seluruhTransaksiTercatat}</small>
+          <p>{"Total transaksi"}</p>
+          <strong>{loading ? "—" : data.length}</strong>
+          <small>{"Seluruh transaksi tercatat"}</small>
         </div>
       </div>
       <div className="stat">
@@ -29,13 +25,11 @@ export function TransactionStats({
           <ArrowDownLeft />
         </span>
         <div>
-          <p>{UI.transaksiMasuk}</p>
+          <p>{"Transaksi masuk"}</p>
           <strong>
-            {loading
-              ? UI.emptyValue
-              : data.filter((t) => t.jenis === TRANSACTION_KIND.masuk).length}
+            {loading ? "—" : data.filter((t) => t.jenis === "MASUK").length}
           </strong>
-          <small>{UI.penerimaanBarang}</small>
+          <small>{"Penerimaan barang"}</small>
         </div>
       </div>
       <div className="stat">
@@ -43,13 +37,11 @@ export function TransactionStats({
           <ArrowUpRight />
         </span>
         <div>
-          <p>{UI.transaksiKeluar}</p>
+          <p>{"Transaksi keluar"}</p>
           <strong>
-            {loading
-              ? UI.emptyValue
-              : data.filter((t) => t.jenis === TRANSACTION_KIND.keluar).length}
+            {loading ? "—" : data.filter((t) => t.jenis === "KELUAR").length}
           </strong>
-          <small>{UI.pengeluaranBarang}</small>
+          <small>{"Pengeluaran barang"}</small>
         </div>
       </div>
     </div>

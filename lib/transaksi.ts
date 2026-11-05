@@ -1,4 +1,3 @@
-import { UI } from "@/data";
 import { Prisma } from "@prisma/client";
 import { db } from "./db";
 import { HttpError } from "./http";
@@ -6,7 +5,7 @@ import { transaksiSchema } from "./validation";
 export async function simpan(body: unknown, nomorLama?: string) {
   const input = transaksiSchema.parse(body);
   if (nomorLama !== undefined && nomorLama !== input.nomor)
-    throw new HttpError(UI.nomorTransaksiTidakDapatDiubah);
+    throw new HttpError("Nomor transaksi tidak dapat diubah.");
   return db.$transaction(
     async (tx) => {
       const barang = await tx.barang.findMany({
@@ -16,7 +15,9 @@ export async function simpan(body: unknown, nomorLama?: string) {
         barang.length !== input.items.length ||
         barang.some((b) => b.kategori !== input.kategori)
       )
-        throw new HttpError(UI.barangTidakTerdaftarAtauTidakSesuaiKategori);
+        throw new HttpError(
+          "Barang tidak terdaftar atau tidak sesuai kategori transaksi.",
+        );
       const data = {
         tanggal: new Date(input.tanggal + "T00:00:00Z"),
         jenis: input.jenis,

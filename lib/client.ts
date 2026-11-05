@@ -1,6 +1,5 @@
-import { TRANSACTION_TYPES, CATEGORIES, LOCALIZATION } from "@/data";
-
-import { UI } from "@/data";
+import { TRANSACTION_TYPES } from "@/lib/validation";
+import { CATEGORIES } from "@/lib/validation";
 export type Barang = {
   kode: string;
   nama: string;
@@ -12,7 +11,11 @@ export type Transaksi = {
   tanggal: string;
   jenis: (typeof TRANSACTION_TYPES)[number];
   kategori: (typeof CATEGORIES)[number];
-  items: { kode: string; qty: number; barang: Barang }[];
+  items: {
+    kode: string;
+    qty: number;
+    barang: Barang;
+  }[];
 };
 export async function api<T>(url: string, options?: RequestInit): Promise<T> {
   const res = await fetch(url, {
@@ -21,14 +24,14 @@ export async function api<T>(url: string, options?: RequestInit): Promise<T> {
     cache: "no-store",
   });
   const data = await res.json();
-  if (!res.ok) throw new Error(data.error || UI.permintaanGagal);
+  if (!res.ok) throw new Error(data.error || "Permintaan gagal.");
   return data;
 }
 export function formatTanggal(value: string) {
-  return new Intl.DateTimeFormat(LOCALIZATION.locale, {
+  return new Intl.DateTimeFormat("id-ID", {
     day: "2-digit",
     month: "short",
     year: "numeric",
-    timeZone: LOCALIZATION.displayTimeZone,
+    timeZone: "UTC",
   }).format(new Date(value));
 }

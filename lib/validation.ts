@@ -1,10 +1,14 @@
-import { LIMITS, TRANSACTION_TYPES, CATEGORIES } from "@/data";
-
-import { UI } from "@/data";
+export const LIMITS = {
+  codeLength: 5,
+  minQuantity: 1,
+  maxQuantity: 2147483647,
+} as const;
+export const TRANSACTION_TYPES = ["MASUK", "KELUAR"] as const;
+export const CATEGORIES = ["SUBMAT", "RAWMAT"] as const;
 import { z } from "zod";
 export const tanggalSchema = z
   .string()
-  .regex(/^\d{4}-\d{2}-\d{2}$/, UI.tanggalHarusYyyyMmDd)
+  .regex(/^\d{4}-\d{2}-\d{2}$/, "Tanggal harus YYYY-MM-DD.")
   .refine((v) => {
     const d = new Date(v + "T00:00:00.000Z");
     return (
@@ -12,43 +16,40 @@ export const tanggalSchema = z
       !Number.isNaN(d.getTime()) &&
       d.toISOString().slice(0, 10) === v
     );
-  }, UI.tanggalTidakValid);
+  }, "Tanggal tidak valid.");
 export const transaksiSchema = z
   .object({
     nomor: z
       .string()
       .trim()
-      .min(1, UI.nomorTransaksiWajibDiisi)
-      .max(LIMITS.codeLength, UI.nomorTransaksiMaksimal5Karakter)
-      .regex(/^[A-Za-z0-9_-]+$/, UI.nomorHanyaBolehHurufAngkaAtau),
+      .min(1, "Nomor transaksi wajib diisi.")
+      .max(LIMITS.codeLength, "Nomor transaksi maksimal 5 karakter.")
+      .regex(/^[A-Za-z0-9_-]+$/, "Nomor hanya boleh huruf, angka, _ atau -."),
     tanggal: tanggalSchema,
     jenis: z.enum(TRANSACTION_TYPES, {
-      error: UI.jenisTransaksiHarusMasukAtauKeluar,
+      error: "Jenis transaksi harus MASUK atau KELUAR.",
     }),
-    kategori: z.enum(CATEGORIES, { error: UI.kategoriTidakValid }),
+    kategori: z.enum(CATEGORIES, { error: "Kategori tidak valid." }),
     items: z
       .array(
         z.object({
-          kode: z
-            .string()
-            .min(1, UI.pilihBarangValidation)
-            .max(LIMITS.codeLength),
+          kode: z.string().min(1, "Pilih barang.").max(LIMITS.codeLength),
           qty: z
             .number()
-            .int(UI.qtyHarusBilanganBulat)
-            .min(LIMITS.minQuantity, UI.qtyMinimal1)
-            .max(LIMITS.maxQuantity, UI.qtyMelebihiBatasInteger),
+            .int("QTY harus bilangan bulat.")
+            .min(LIMITS.minQuantity, "QTY minimal 1.")
+            .max(LIMITS.maxQuantity, "QTY melebihi batas integer."),
         }),
       )
-      .min(1, UI.tambahkanMinimalSatuItem),
+      .min(1, "Tambahkan minimal satu item."),
   })
   .refine((v) => new Set(v.items.map((i) => i.kode)).size === v.items.length, {
-    message: UI.barangTidakBolehBerulangDalamSatuTransaksi,
+    message: "Barang tidak boleh berulang dalam satu transaksi.",
     path: ["items"],
   });
 export type InputTransaksi = z.infer<typeof transaksiSchema>;
 export const periodeSchema = z
   .object({ awal: tanggalSchema, akhir: tanggalSchema })
   .refine((v) => v.awal <= v.akhir, {
-    message: UI.tanggalAwalTidakBolehMelewatiTanggalAkhir,
+    message: "Tanggal awal tidak boleh melewati tanggal akhir.",
   });

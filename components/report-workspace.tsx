@@ -1,6 +1,4 @@
 "use client";
-import { UI } from "@/data";
-
 import { TableProperties, Info } from "lucide-react";
 import { useReports } from "@/hooks/use-reports";
 import { ReportPeriodFilter } from "@/components/report-period-filter";
@@ -13,15 +11,15 @@ export function ReportWorkspace() {
     <>
       {" "}
       <div className="breadcrumb">
-        {UI.ruangKerja}
-        <span>{UI.breadcrumbSeparator}</span>
-        {UI.laporanStok}
+        {"Ruang kerja"}
+        <span>{"/"}</span>
+        {"Laporan stok"}
       </div>
       <div className="page-heading">
         <div>
-          <div className="eyebrow">{UI.ringkasanPersediaan}</div>
-          <h1>{UI.laporanStokTitle}</h1>
-          <p>{UI.pantauMutasiDanSaldoBarangDalamPeriode}</p>
+          <div className="eyebrow">{"RINGKASAN PERSEDIAAN"}</div>
+          <h1>{"Laporan Stok"}</h1>
+          <p>{"Pantau mutasi dan saldo barang dalam periode pilihan."}</p>
         </div>
         <span className="heading-icon">
           <TableProperties size={25} />
@@ -36,8 +34,10 @@ export function ReportWorkspace() {
       <div className="info-note">
         <Info size={19} />
         <p>
-          <strong>{UI.perhitunganDalamPeriode}</strong>
-          {UI.stokAkhirTransaksiMasukTransaksiKeluarSaldo}
+          <strong>{"Perhitungan dalam periode"}</strong>
+          {
+            "Stok akhir = transaksi masuk − transaksi keluar. Saldo sebelum periode tidak disertakan."
+          }
         </p>
       </div>
       <ReportTabs tab={tab} setTab={setTab} />

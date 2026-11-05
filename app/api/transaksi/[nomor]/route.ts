@@ -1,9 +1,11 @@
-
-import {UI} from "@/data";
 import { db } from "@/lib/db";
 import { json, failure, HttpError } from "@/lib/http";
 import { simpan } from "@/lib/transaksi";
-type Context = { params: Promise<{ nomor: string }> };
+type Context = {
+  params: Promise<{
+    nomor: string;
+  }>;
+};
 export async function GET(_: Request, ctx: Context) {
   try {
     const { nomor } = await ctx.params;
@@ -13,7 +15,7 @@ export async function GET(_: Request, ctx: Context) {
         items: { include: { barang: true }, orderBy: { kode: "asc" } },
       },
     });
-    if (!data) throw new HttpError(UI.transaksiTidakDitemukanError, 404);
+    if (!data) throw new HttpError("Transaksi tidak ditemukan.", 404);
     return json(data);
   } catch (e) {
     return failure(e);
@@ -32,7 +34,7 @@ export async function DELETE(_: Request, ctx: Context) {
     await db.$transaction(async (tx) => {
       await tx.transaksi.delete({ where: { nomor } });
     });
-    return json({ message: UI.transaksiDanSeluruhItemBerhasilDihapus });
+    return json({ message: "Transaksi dan seluruh item berhasil dihapus." });
   } catch (e) {
     return failure(e);
   }

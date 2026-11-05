@@ -1,4 +1,3 @@
-import { UI } from "@/data";
 import { Prisma } from "@prisma/client";
 import { ZodError } from "zod";
 export class HttpError extends Error {
@@ -26,20 +25,26 @@ export function failure(e: unknown) {
     return json({ error: e.issues.map((i) => i.message).join(" ") }, 400);
   if (e instanceof HttpError) return json({ error: e.message }, e.status);
   if (e instanceof SyntaxError)
-    return json({ error: UI.formatJsonTidakValid }, 400);
+    return json({ error: "Format JSON tidak valid." }, 400);
   if (e instanceof Prisma.PrismaClientKnownRequestError) {
     if (e.code === "P2002")
-      return json({ error: UI.nomorTransaksiSudahDigunakan }, 409);
+      return json({ error: "Nomor transaksi sudah digunakan." }, 409);
     if (e.code === "P2025")
-      return json({ error: UI.transaksiTidakDitemukanAtauSudahDihapus }, 404);
+      return json(
+        { error: "Transaksi tidak ditemukan atau sudah dihapus." },
+        404,
+      );
     if (e.code === "P2034")
       return json(
         {
-          error: UI.dataSedangDiubahPenggunaLainMuatUlang,
+          error: "Data sedang diubah pengguna lain. Muat ulang dan coba lagi.",
         },
         409,
       );
   }
   console.error(e);
-  return json({ error: UI.gagalMengaksesDatabasePeriksaKoneksiDanSetup }, 500);
+  return json(
+    { error: "Gagal mengakses database. Periksa koneksi dan setup database." },
+    500,
+  );
 }

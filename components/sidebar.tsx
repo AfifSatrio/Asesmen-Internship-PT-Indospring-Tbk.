@@ -1,8 +1,8 @@
 "use client";
-import { NAVIGATION } from "@/data";
-
-import { UI } from "@/data";
-
+const NAVIGATION = [
+  { href: "/", label: "Transaksi Barang", icon: "transactions" },
+  { href: "/laporan", label: "Laporan Stok", icon: "reports" },
+] as const;
 import Link from "next/link";
 import {
   Boxes,
@@ -18,11 +18,11 @@ export function Sidebar({ path }: { path: string }) {
           <Boxes size={24} />
         </span>
         <span>
-          {UI.indospring}
-          <small>{UI.inventoryManagement}</small>
+          {"INDOSPRING"}
+          <small>{"INVENTORY MANAGEMENT"}</small>
         </span>
       </Link>
-      <div className="workspace-label">{UI.ruangKerjaEyebrow}</div>
+      <div className="workspace-label">{"RUANG KERJA"}</div>
       <nav>
         {NAVIGATION.map((item) => (
           <Link
@@ -41,12 +41,12 @@ export function Sidebar({ path }: { path: string }) {
       </nav>
       <div className="sidebar-note">
         <Database size={18} />
-        <strong>{UI.pencatatanTerpusat}</strong>
-        <p>{UI.kelolaPergerakanBarangDenganDataYangTerhubung}</p>
+        <strong>{"Pencatatan terpusat"}</strong>
+        <p>{"Kelola pergerakan barang dengan data yang terhubung."}</p>
       </div>
       <div className="sidebar-footer">
-        {UI.ptIndospringTbk}
-        <span>{UI.asesmenItSoftware2026}</span>
+        {"PT Indospring Tbk."}
+        <span>{"Asesmen IT Software · 2026"}</span>
       </div>
     </aside>
   );

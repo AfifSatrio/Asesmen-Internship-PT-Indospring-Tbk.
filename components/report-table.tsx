@@ -1,11 +1,35 @@
 "use client";
-import { LOCALIZATION } from "@/data";
-
-import { UI } from "@/data";
-
+import { REPORT_TABS } from "@/components/report-tabs";
+const REPORT_COLUMNS = {
+  barang: [
+    "KODE_BARANG",
+    "NAMA_BARANG",
+    "SATUAN",
+    "KATEGORI",
+    "TRANS_MASUK",
+    "TRANS_KELUAR",
+    "STOK_AKHIR",
+  ],
+  kelompok: ["KATEGORI", "SATUAN", "TRANS_MASUK", "TRANS_KELUAR", "STOK_AKHIR"],
+  tertinggi: [
+    "KATEGORI",
+    "SATUAN",
+    "KODE_BARANG",
+    "NAMA_BARANG",
+    "TRANS_KELUAR",
+  ],
+};
+const REPORT_LABELS: Record<string, string> = {
+  KODE_BARANG: "Kode barang",
+  NAMA_BARANG: "Nama barang",
+  SATUAN: "Satuan",
+  KATEGORI: "Kategori",
+  TRANS_MASUK: "Trans. masuk",
+  TRANS_KELUAR: "Trans. keluar",
+  STOK_AKHIR: "Stok akhir",
+};
 import { TableProperties } from "lucide-react";
 import { formatTanggal } from "@/lib/client";
-import { REPORT_TABS, REPORT_COLUMNS, REPORT_LABELS } from "@/data";
 import type { ReportsController } from "@/hooks/use-reports";
 export function ReportTable({
   tab,
@@ -20,18 +44,18 @@ export function ReportTable({
         <div>
           <h2>{REPORT_TABS.find((t) => t.key === tab)?.label}</h2>
           <p>
-            {formatTanggal(period.awal)} {UI.emptyValue}{" "}
-            {formatTanggal(period.akhir)}
+            {formatTanggal(period.awal)} {"—"} {formatTanggal(period.akhir)}
           </p>
         </div>
         <span className="category">
-          {data?.[tab].length ?? 0}{" "}
-          {tab === "kelompok" ? UI.kelompok : UI.barang}
+          {data?.[tab].length ?? 0} {tab === "kelompok" ? "kelompok" : "barang"}
         </span>
       </div>
       {tab === "tertinggi" && (
         <p className="report-explanation">
-          {UI.barangDenganTotalPengeluaranTertinggiPadaSetiap}
+          {
+            "Barang dengan total pengeluaran tertinggi pada setiap kategori dan satuan. Seluruh nilai seri ditampilkan; kelompok tanpa pengeluaran dikecualikan."
+          }
         </p>
       )}
       <div className="table-wrap">
@@ -67,7 +91,7 @@ export function ReportTable({
                     }
                   >
                     {c.startsWith("TRANS_") || c === "STOK_AKHIR"
-                      ? BigInt(r[c]).toLocaleString(LOCALIZATION.locale)
+                      ? BigInt(r[c]).toLocaleString("id-ID")
                       : r[c]}
                   </td>
                 ))}
@@ -76,28 +100,30 @@ export function ReportTable({
           </tbody>
         </table>
         {loading ? (
-          <div className="empty">{UI.menghitungLaporan}</div>
+          <div className="empty">{"Menghitung laporan…"}</div>
         ) : !data?.[tab].length ? (
           <div className="empty">
             <TableProperties size={30} />
             <h3>
-              {error ? UI.laporanBelumTersedia : UI.tidakAdaDataUntukPeriodeIni}
+              {error
+                ? "Laporan belum tersedia"
+                : "Tidak ada data untuk periode ini"}
             </h3>
             <p>
               {error
-                ? UI.periksaKoneksiDatabaseDanCobaTampilkanKembali
-                : UI.pilihPeriodeLainAtauTambahkanTransaksiBarang}
+                ? "Periksa koneksi database dan coba tampilkan kembali."
+                : "Pilih periode lain atau tambahkan transaksi barang."}
             </p>
           </div>
         ) : null}
       </div>
       <div className="table-footer">
         {tab === "barang"
-          ? UI.termasukBarangTanpaTransaksi
+          ? "Termasuk barang tanpa transaksi"
           : tab === "kelompok"
-            ? UI.dikelompokkanBerdasarkanKategoriDanSatuan
-            : UI.peringkatBerdasarkanTotalQtyKeluar}
-        <span>{UI.periodeInklusif}</span>
+            ? "Dikelompokkan berdasarkan kategori dan satuan"
+            : "Peringkat berdasarkan total QTY keluar"}
+        <span>{"Periode inklusif"}</span>
       </div>
     </section>
   );

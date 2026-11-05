@@ -1,8 +1,5 @@
 "use client";
-import { TRANSACTION_TYPES } from "@/data";
-
-import { UI } from "@/data";
-
+import { TRANSACTION_TYPES } from "@/lib/validation";
 import { Search } from "lucide-react";
 import type { TransactionsController } from "@/hooks/use-transactions";
 export function TransactionFilters({
@@ -19,18 +16,18 @@ export function TransactionFilters({
       <label className="search">
         <Search size={18} />
         <input
-          aria-label={UI.cariTransaksi}
-          placeholder={UI.cariNomorTransaksiAtauKategori}
+          aria-label={"Cari transaksi"}
+          placeholder={"Cari nomor transaksi atau kategori…"}
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
       </label>
       <select
-        aria-label={UI.filterJenisTransaksi}
+        aria-label={"Filter jenis transaksi"}
         value={jenis}
         onChange={(e) => setJenis(e.target.value)}
       >
-        <option value="">{UI.semuaJenisTransaksi}</option>
+        <option value="">{"Semua jenis transaksi"}</option>
         {TRANSACTION_TYPES.map((type) => (
           <option key={type} value={type}>
             {type}
