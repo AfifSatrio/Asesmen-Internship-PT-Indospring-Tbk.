@@ -1,33 +1,5 @@
 "use client";
-import { REPORT_TABS } from "@/components/report-tabs";
-const REPORT_COLUMNS = {
-  barang: [
-    "KODE_BARANG",
-    "NAMA_BARANG",
-    "SATUAN",
-    "KATEGORI",
-    "TRANS_MASUK",
-    "TRANS_KELUAR",
-    "STOK_AKHIR",
-  ],
-  kelompok: ["KATEGORI", "SATUAN", "TRANS_MASUK", "TRANS_KELUAR", "STOK_AKHIR"],
-  tertinggi: [
-    "KATEGORI",
-    "SATUAN",
-    "KODE_BARANG",
-    "NAMA_BARANG",
-    "TRANS_KELUAR",
-  ],
-};
-const REPORT_LABELS: Record<string, string> = {
-  KODE_BARANG: "Kode barang",
-  NAMA_BARANG: "Nama barang",
-  SATUAN: "Satuan",
-  KATEGORI: "Kategori",
-  TRANS_MASUK: "Trans. masuk",
-  TRANS_KELUAR: "Trans. keluar",
-  STOK_AKHIR: "Stok akhir",
-};
+import { REPORT_TABS, REPORT_COLUMNS, REPORT_LABELS } from "@/data";
 import { TableProperties } from "lucide-react";
 import { formatTanggal } from "@/lib/client";
 import type { ReportsController } from "@/hooks/use-reports";

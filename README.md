@@ -165,4 +165,4 @@ Setiap komponen UI berada dalam file `.tsx` tersendiri langsung di folder `compo
 import { TransactionDialog } from "@/components/transaction-dialog";
 ```
 
-Teks dan pengaturan tampilan berada pada komponen atau hook terkait. Batas input, kategori, dan jenis transaksi bersama didefinisikan di `lib/validation.ts` agar frontend dan backend tetap konsisten.
+Konstanta konfigurasi komponen (navigasi, pilihan form, tab, kolom, dan label laporan) berada di `data/index.ts` dan diimpor melalui `@/data`. Komponen UI tetap berada di file `.tsx` masing-masing. Teks tampilan dan state tetap pada komponen atau hook terkait. Batas input, kategori, dan jenis transaksi bersama didefinisikan di `lib/validation.ts` agar frontend dan backend tetap konsisten.

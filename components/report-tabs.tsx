@@ -1,9 +1,5 @@
 "use client";
-export const REPORT_TABS = [
-  { key: "barang", label: "Stok per barang", icon: "table" },
-  { key: "kelompok", label: "Stok per kelompok", icon: "layers" },
-  { key: "tertinggi", label: "Pengeluaran tertinggi", icon: "trophy" },
-] as const;
+import { REPORT_TABS } from "@/data";
 import { ReportIcon } from "@/components/report-icon";
 import type { ReportsController } from "@/hooks/use-reports";
 export function ReportTabs({

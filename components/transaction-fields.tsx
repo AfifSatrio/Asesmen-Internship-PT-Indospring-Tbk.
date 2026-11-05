@@ -1,9 +1,6 @@
 "use client";
+import { TRANSACTION_OPTIONS } from "@/data";
 import { LIMITS } from "@/lib/validation";
-const TRANSACTION_OPTIONS = [
-  { value: "MASUK", label: "MASUK — Barang masuk" },
-  { value: "KELUAR", label: "KELUAR — Barang keluar" },
-] as const;
 import { CATEGORIES } from "@/lib/validation";
 import type { TransactionsController } from "@/hooks/use-transactions";
 import type { InputTransaksi } from "@/lib/validation";

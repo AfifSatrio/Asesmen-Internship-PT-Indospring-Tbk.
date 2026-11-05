@@ -1,8 +1,5 @@
 "use client";
-const NAVIGATION = [
-  { href: "/", label: "Transaksi Barang", icon: "transactions" },
-  { href: "/laporan", label: "Laporan Stok", icon: "reports" },
-] as const;
+import { NAVIGATION } from "@/data";
 import Link from "next/link";
 import {
   Boxes,
