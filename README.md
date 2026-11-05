@@ -156,3 +156,9 @@ docs/screenshots/    Bukti tampilan dari pengujian browser
 ![Pengeluaran tertinggi](docs/screenshots/laporan-tertinggi.png)
 
 Referensi implementasi: [Next.js Route Handlers](https://nextjs.org/docs/app/getting-started/route-handlers), [Prisma 6 Transactions](https://www.prisma.io/docs/orm/v6/prisma-client/queries/transactions).
+
+## Data statis aplikasi
+
+Seluruh teks UI, pesan validasi/notifikasi, metadata, navigasi, opsi jenis transaksi/kategori, batas input, konfigurasi bahasa, dan periode default dikelola di **`data/index.ts`**. Komponen, hooks, dan backend mengimpor konstanta yang sama melalui `@/data`. File ini tidak mengimpor React, Prisma, atau kredensial sehingga aman dipakai bersama oleh client dan server.
+
+Data barang dan transaksi tetap di PostgreSQL. `sql/master-data.sql` tetap menjadi script pengisian master yang diwajibkan soal; SQL schema/laporan dan fixture pengujian dipertahankan sebagai artefak mandiri. Identitas field database, markup, class CSS, dan logika program bukan konten statis UI.

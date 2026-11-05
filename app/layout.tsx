@@ -1,18 +1,15 @@
+import { APP_METADATA, LOCALIZATION } from "@/data";
 import type { Metadata } from "next";
 import { Shell } from "@/components/shell";
 import "./globals.css";
-export const metadata: Metadata = {
-  title: "Transaksi Barang | Indospring",
-  description:
-    "Pencatatan transaksi barang masuk, keluar, dan laporan stok PT Indospring Tbk.",
-};
+export const metadata: Metadata = APP_METADATA;
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   return (
-    <html lang="id">
+    <html lang={LOCALIZATION.language}>
       <body>
         <Shell>{children}</Shell>
       </body>

@@ -1,3 +1,6 @@
+import { TRANSACTION_TYPES, CATEGORIES, LOCALIZATION } from "@/data";
+
+import { UI } from "@/data";
 export type Barang = {
   kode: string;
   nama: string;
@@ -7,8 +10,8 @@ export type Barang = {
 export type Transaksi = {
   nomor: string;
   tanggal: string;
-  jenis: "MASUK" | "KELUAR";
-  kategori: "SUBMAT" | "RAWMAT";
+  jenis: (typeof TRANSACTION_TYPES)[number];
+  kategori: (typeof CATEGORIES)[number];
   items: { kode: string; qty: number; barang: Barang }[];
 };
 export async function api<T>(url: string, options?: RequestInit): Promise<T> {
@@ -18,14 +21,14 @@ export async function api<T>(url: string, options?: RequestInit): Promise<T> {
     cache: "no-store",
   });
   const data = await res.json();
-  if (!res.ok) throw new Error(data.error || "Permintaan gagal.");
+  if (!res.ok) throw new Error(data.error || UI.permintaanGagal);
   return data;
 }
 export function formatTanggal(value: string) {
-  return new Intl.DateTimeFormat("id-ID", {
+  return new Intl.DateTimeFormat(LOCALIZATION.locale, {
     day: "2-digit",
     month: "short",
     year: "numeric",
-    timeZone: "UTC",
+    timeZone: LOCALIZATION.displayTimeZone,
   }).format(new Date(value));
 }
