@@ -43,6 +43,19 @@ npm start
 
 Build memakai Webpack untuk kompatibilitas lingkungan yang membatasi proses/port internal Turbopack. Build tidak memerlukan database aktif; penggunaan aplikasi memerlukannya.
 
+## Jika database gagal diakses
+
+`npm run dev` menjalankan web server; koneksi tetap membutuhkan server PostgreSQL yang aktif. Periksa host/port di `DATABASE_URL`, layanan PostgreSQL, dan apakah setup tabel sudah dijalankan. Jangan ulangi `db:setup` pada database yang sudah berisi tabel/data.
+
+Pada workspace pengembangan yang memiliki cluster lokal `.local/pgdata` dan runtime `.local/pg-runtime`, `npm run dev` serta `npm start` sekarang otomatis menyalakan kembali cluster tersebut apabila `.env` mengarah ke `127.0.0.1:55432`. Proses ini tidak membuat ulang database, mengganti password, atau menghapus transaksi. Database berjalan di latar belakang dan dapat dikelola dengan:
+
+```bash
+npm run db:local:start
+npm run db:local:stop
+```
+
+Folder `.local` tidak disertakan Git. Pada clone baru, tetap gunakan instalasi PostgreSQL dan alur setup resmi di atas; startup otomatis tidak mengelola PostgreSQL eksternal. Jika komputer di-restart, jalankan kembali `npm run dev` untuk menyalakan cluster lokal yang sudah ada.
+
 ## Fitur
 
 - Daftar, pencarian nomor/kategori, filter jenis, detail, tambah, koreksi, dan hapus transaksi.

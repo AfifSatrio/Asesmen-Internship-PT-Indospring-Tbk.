@@ -10,7 +10,11 @@
     "db:generate": "prisma generate",
     "db:setup": "prisma db execute --schema prisma/schema.prisma --file sql/schema.sql && prisma db execute --schema prisma/schema.prisma --file sql/master-data.sql",
     "test": "node --import tsx --test tests/validation.test.ts",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "predev": "node scripts/local-db.mjs --if-configured",
+    "prestart": "node scripts/local-db.mjs --if-configured",
+    "db:local:start": "node scripts/local-db.mjs start",
+    "db:local:stop": "node scripts/local-db.mjs stop"
   },
   "dependencies": {
     "next": "^16.0.0",
