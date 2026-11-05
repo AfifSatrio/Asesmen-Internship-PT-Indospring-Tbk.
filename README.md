@@ -162,3 +162,13 @@ Referensi implementasi: [Next.js Route Handlers](https://nextjs.org/docs/app/get
 Seluruh teks UI, pesan validasi/notifikasi, metadata, navigasi, opsi jenis transaksi/kategori, batas input, konfigurasi bahasa, dan periode default dikelola di **`data/index.ts`**. Komponen, hooks, dan backend mengimpor konstanta yang sama melalui `@/data`. File ini tidak mengimpor React, Prisma, atau kredensial sehingga aman dipakai bersama oleh client dan server.
 
 Data barang dan transaksi tetap di PostgreSQL. `sql/master-data.sql` tetap menjadi script pengisian master yang diwajibkan soal; SQL schema/laporan dan fixture pengujian dipertahankan sebagai artefak mandiri. Identitas field database, markup, class CSS, dan logika program bukan konten statis UI.
+
+## Komponen UI
+
+Setiap komponen UI berada dalam file `.tsx` tersendiri langsung di folder `components/`, misalnya `components/sidebar.tsx`, `components/transaction-dialog.tsx`, dan `components/report-table.tsx`. Impor komponen langsung dari file tersebut:
+
+```tsx
+import { TransactionDialog } from "@/components/transaction-dialog";
+```
+
+`data/index.ts` khusus untuk data statis dan konstanta bersama, bukan definisi komponen UI.
