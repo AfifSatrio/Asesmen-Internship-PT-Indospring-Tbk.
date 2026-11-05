@@ -14,8 +14,8 @@ Aplikasi asesmen IT Software untuk mencatat barang masuk/keluar dan menghasilkan
 Prasyarat: **Node.js 22.12+ (disarankan Node.js 24 LTS)**, npm, dan **PostgreSQL 16+** yang sudah berjalan. Buat database kosong bernama `indospring` menggunakan pgAdmin atau `createdb indospring` dengan akun PostgreSQL Anda.
 
 ```bash
-git clone https://github.com/AfifSatrio/assesment-PT-Indospring-Tbk.git
-cd assesment-PT-Indospring-Tbk
+git clone https://github.com/AfifSatrio/Asesmen-Internship-PT-Indospring-Tbk..git
+cd Asesmen-Internship-PT-Indospring-Tbk.
 npm ci
 cp .env.example .env
 ```
