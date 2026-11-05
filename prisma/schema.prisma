@@ -1,0 +1,40 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Barang {
+  kode     String   @id @map("KODE_BARANG") @db.VarChar(5)
+  nama     String   @map("NAMA_BARANG") @db.VarChar(50)
+  satuan   String   @map("SATUAN") @db.VarChar(5)
+  kategori String   @map("KATEGORI") @db.VarChar(10)
+  details  Detail[]
+
+  @@map("MSBARANG")
+}
+
+model Transaksi {
+  nomor    String   @id @map("NO_TRANSAKSI") @db.VarChar(5)
+  tanggal  DateTime @map("TANGGAL") @db.Date
+  jenis    String   @map("JENIS_TRANSAKSI") @db.VarChar(10)
+  kategori String   @map("KATEGORI") @db.VarChar(10)
+  items    Detail[]
+
+  @@index([tanggal])
+  @@map("TRMUTASIHD")
+}
+
+model Detail {
+  nomor     String    @map("NO_TRANSAKSI") @db.VarChar(5)
+  kode      String    @map("KODE_BARANG") @db.VarChar(5)
+  qty       Int       @map("QTY")
+  transaksi Transaksi @relation(fields: [nomor], references: [nomor], onDelete: Cascade, onUpdate: Cascade)
+  barang    Barang    @relation(fields: [kode], references: [kode], onDelete: Restrict, onUpdate: Cascade)
+
+  @@id([nomor, kode])
+  @@map("TRMUTASIDT")
+}
