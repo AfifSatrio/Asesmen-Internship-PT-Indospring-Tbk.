@@ -41,6 +41,12 @@ export function Sidebar({ path }: { path: string }) {
         <strong>{"Pencatatan terpusat"}</strong>
         <p>{"Kelola pergerakan barang dengan data yang terhubung."}</p>
       </div>
+      <div className="sidebar-user" aria-label="Peran pengguna">
+        <span className="avatar" aria-hidden="true">
+          A
+        </span>
+        <span>Administrator</span>
+      </div>
       <div className="sidebar-footer">
         {"PT Indospring Tbk."}
         <span>{"Asesmen IT Software · 2026"}</span>
