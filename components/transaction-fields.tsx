@@ -1,7 +1,6 @@
 "use client";
 import { TRANSACTION_OPTIONS } from "@/data";
-import { LIMITS } from "@/lib/validation";
-import { CATEGORIES } from "@/lib/validation";
+import { LIMITS, CATEGORIES } from "@/lib/validation";
 import type { TransactionsController } from "@/hooks/use-transactions";
 import type { InputTransaksi } from "@/lib/validation";
 export function TransactionFields({

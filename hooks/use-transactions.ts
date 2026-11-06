@@ -269,7 +269,6 @@ export function useTransactions() {
     }
   }
   return {
-    data: result?.items ?? [],
     visible: loading ? [] : (result?.items ?? []),
     summary: result?.summary ?? null,
     total: result?.total ?? 0,

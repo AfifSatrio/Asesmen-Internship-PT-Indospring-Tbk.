@@ -1,7 +1,5 @@
-export type ReportRow = Record<string, string>;
 export type Reports = {
-  barang: ReportRow[];
-  kelompok: ReportRow[];
-  tertinggi: ReportRow[];
+  barang: Record<string, string>[];
+  kelompok: Record<string, string>[];
+  tertinggi: Record<string, string>[];
 };
-export type ReportPeriod = { awal: string; akhir: string };

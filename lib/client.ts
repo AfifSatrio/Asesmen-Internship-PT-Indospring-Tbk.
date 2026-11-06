@@ -1,5 +1,4 @@
-import { TRANSACTION_TYPES } from "@/lib/validation";
-import { CATEGORIES } from "@/lib/validation";
+import { TRANSACTION_TYPES, CATEGORIES } from "@/lib/validation";
 export type Barang = {
   kode: string;
   nama: string;
