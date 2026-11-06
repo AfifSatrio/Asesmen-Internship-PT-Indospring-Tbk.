@@ -227,10 +227,12 @@ docs/screenshots/    Bukti tampilan dari pengujian browser
 
 ## Screenshot
 
-Screenshot berikut merupakan hasil pengujian browser sebelumnya dan dapat masih memperlihatkan topbar sebelum perubahan UI terakhir. Jalankan ulang suite E2E pada database pengujian kosong untuk memperbaruinya.
+Screenshot diperbarui pada 6 November 2026 dari build produksi lokal: UI tanpa topbar, Administrator di bawah panel Pencatatan terpusat pada sidebar desktop, dan tampilan mobile. Data daftar serta laporan memakai lima transaksi contoh soal. Isian T006 pada screenshot form hanya contoh pengisian dan tidak disimpan.
 
 ![Form transaksi](docs/screenshots/form-transaksi.png)
 ![Daftar transaksi](docs/screenshots/daftar-transaksi.png)
 ![Laporan per barang](docs/screenshots/laporan-barang.png)
 ![Laporan per kelompok](docs/screenshots/laporan-kelompok.png)
 ![Pengeluaran tertinggi](docs/screenshots/laporan-tertinggi.png)
+
+![Tampilan mobile](docs/screenshots/mobile.png)

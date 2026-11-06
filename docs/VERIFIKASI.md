@@ -37,3 +37,9 @@ Screenshot berada di `docs/screenshots/`. Pengujian memakai database sementara t
 - SQL mandiri 3.1–3.3 diuji ulang dan tetap sesuai contoh. Query laporan menyaring header periode sebelum agregasi detail. Indeks tanggal/nomor menggantikan indeks tanggal tunggal; daftar indeks berisi tiga primary key dan satu indeks gabungan, tanpa duplikasi primary key.
 - EXPLAIN pada dataset contoh yang kecil memilih sequential scan untuk header, dan menggunakan primary key detail untuk join. Tidak dipaksakan penggunaan indeks atau diklaim hasil benchmark beban besar.
 - Tidak ada script/konfigurasi lint pada proyek, sehingga lint tidak dijalankan. Tidak ditambahkan library performa atau lint.
+
+## Pembaruan screenshot UI
+
+Pada 6 November 2026, enam screenshot di `docs/screenshots/` diperbarui dari build produksi lokal menggunakan Chrome headless: daftar transaksi, form tambah, tiga tab laporan, dan tampilan mobile. Build produksi beserta pemeriksaan TypeScript lulus.
+
+Pengambilan gambar memverifikasi tidak ada topbar, posisi Administrator di bawah panel Pencatatan terpusat pada desktop, serta tidak ada overflow halaman pada lebar mobile 390px. Desktop memakai viewport 1440 × 1000 dan mobile 390 × 844, dengan screenshot seluruh halaman. Browser tidak melaporkan error JavaScript. Form T006 diisi untuk dokumentasi lalu dibatalkan; data transaksi tidak diubah. Ini merupakan pemeriksaan tampilan, bukan pengulangan seluruh suite CRUD/API.
