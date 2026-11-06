@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useRef } from "react";
-import { X, Save } from "lucide-react";
+import { X } from "lucide-react";
 import { TransactionFields } from "@/components/transaction-fields";
 import { TransactionItems } from "@/components/transaction-items";
 import type { TransactionsController } from "@/hooks/use-transactions";
@@ -38,22 +38,23 @@ export function TransactionDialog({
         if (!busy) setMode(null);
       }}
       className="transaction-dialog"
+      aria-labelledby="transaction-dialog-title"
+      aria-describedby="transaction-dialog-description"
     >
-      <form onSubmit={save}>
+      <form onSubmit={save} aria-busy={busy}>
         <div className="dialog-heading">
           <div>
-            <div className="eyebrow">{"TRANSAKSI BARANG"}</div>
-            <h2>
+            <h2 id="transaction-dialog-title">
               {mode === "tambah"
                 ? "Tambah transaksi"
                 : mode === "koreksi"
                   ? "Koreksi transaksi"
                   : "Detail transaksi"}
             </h2>
-            <p>
+            <p id="transaction-dialog-description">
               {readonly
                 ? "Informasi header dan rincian barang."
-                : "Lengkapi informasi dan rincian barang di bawah ini."}
+                : "Isi header transaksi, lalu tambahkan barang. Semua kolom bertanda * wajib diisi."}
             </p>
           </div>
           <button
@@ -101,7 +102,6 @@ export function TransactionDialog({
           </button>
           {!readonly && (
             <button className="primary" type="submit" disabled={busy}>
-              <Save size={17} />
               {busy ? "Menyimpan…" : "Simpan Transaksi"}
             </button>
           )}

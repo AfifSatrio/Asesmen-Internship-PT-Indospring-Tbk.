@@ -1,6 +1,6 @@
 "use client";
 import { REPORT_TABS, REPORT_COLUMNS, REPORT_LABELS } from "@/data";
-import { TableProperties } from "lucide-react";
+
 import { formatTanggal } from "@/lib/client";
 import type { ReportsController } from "@/hooks/use-reports";
 export function ReportTable({
@@ -11,7 +11,13 @@ export function ReportTable({
   error,
 }: Pick<ReportsController, "tab" | "period" | "data" | "loading" | "error">) {
   return (
-    <section className="card" role="tabpanel">
+    <section
+      className="card"
+      role="tabpanel"
+      id="report-panel"
+      aria-labelledby={`tab-${tab}`}
+      aria-busy={loading}
+    >
       <div className="card-heading">
         <div>
           <h2>{REPORT_TABS.find((t) => t.key === tab)?.label}</h2>
@@ -30,7 +36,12 @@ export function ReportTable({
           }
         </p>
       )}
-      <div className="table-wrap">
+      <div
+        className="table-wrap"
+        role="region"
+        aria-label="Tabel laporan stok"
+        tabIndex={0}
+      >
         <table>
           <thead>
             <tr>
@@ -72,10 +83,11 @@ export function ReportTable({
           </tbody>
         </table>
         {loading ? (
-          <div className="empty">{"Menghitung laporan…"}</div>
+          <div className="empty" role="status">
+            Memuat laporan…
+          </div>
         ) : !data?.[tab].length ? (
           <div className="empty">
-            <TableProperties size={30} />
             <h3>
               {error
                 ? "Laporan belum tersedia"

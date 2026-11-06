@@ -285,7 +285,9 @@ test("form CRUD, validasi API, laporan contoh, periode, seri, dan responsif", as
   await expect(page.getByLabel("QTY 1", { exact: true })).toHaveValue("3");
   await page.getByRole("button", { name: "Tutup", exact: true }).last().click();
   page.once("dialog", (d) => d.accept());
-  await page.getByRole("button", { name: "Hapus X001", exact: true }).click();
+  await page
+    .getByRole("button", { name: "Hapus transaksi X001", exact: true })
+    .click();
   await expect(
     page.getByRole("cell", { name: "X001", exact: true }),
   ).not.toBeVisible();

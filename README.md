@@ -159,10 +159,14 @@ Referensi implementasi: [Next.js Route Handlers](https://nextjs.org/docs/app/get
 
 ## Komponen UI
 
-Setiap komponen UI berada dalam file `.tsx` tersendiri langsung di folder `components/`, misalnya `components/sidebar.tsx`, `components/transaction-dialog.tsx`, dan `components/report-table.tsx`. Impor komponen langsung dari file tersebut:
+Setiap komponen UI berada dalam file `.tsx` tersendiri langsung di folder `components/`, misalnya `components/topbar.tsx`, `components/transaction-dialog.tsx`, dan `components/report-table.tsx`. Impor komponen langsung dari file tersebut:
 
 ```tsx
 import { TransactionDialog } from "@/components/transaction-dialog";
 ```
 
 Konstanta konfigurasi komponen (navigasi, pilihan form, tab, kolom, dan label laporan) berada di `data/index.ts` dan diimpor melalui `@/data`. Komponen UI tetap berada di file `.tsx` masing-masing. Teks tampilan dan state tetap pada komponen atau hook terkait. Batas input, kategori, dan jenis transaksi bersama didefinisikan di `lib/validation.ts` agar frontend dan backend tetap konsisten.
+
+## Tampilan operasional
+
+Navigasi berada pada header ringkas dengan dua menu. Halaman transaksi berfokus pada tabel, tanpa sidebar atau kartu statistik. Aksi `Hapus transaksi` menghapus header beserta seluruh detail setelah konfirmasi; `Hapus baris` hanya mengeluarkan item dari form dan baru tersimpan ketika transaksi disimpan. Nama barang dan satuan terisi otomatis. Form menjadi satu kolom pada layar kecil; tabel memiliki area gulir horizontal yang dapat difokuskan lewat keyboard. Navigasi tab laporan mendukung tombol panah, Home, dan End.

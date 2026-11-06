@@ -1,8 +1,8 @@
 // Konfigurasi statis komponen UI. Tidak berisi komponen React atau state.
 
 export const NAVIGATION = [
-  { href: "/", label: "Transaksi Barang", icon: "transactions" },
-  { href: "/laporan", label: "Laporan Stok", icon: "reports" },
+  { href: "/", label: "Transaksi Barang" },
+  { href: "/laporan", label: "Laporan Stok" },
 ] as const;
 
 export const TRANSACTION_OPTIONS = [
@@ -11,9 +11,9 @@ export const TRANSACTION_OPTIONS = [
 ] as const;
 
 export const REPORT_TABS = [
-  { key: "barang", label: "Stok per barang", icon: "table" },
-  { key: "kelompok", label: "Stok per kelompok", icon: "layers" },
-  { key: "tertinggi", label: "Pengeluaran tertinggi", icon: "trophy" },
+  { key: "barang", label: "Stok per barang" },
+  { key: "kelompok", label: "Stok per kelompok" },
+  { key: "tertinggi", label: "Pengeluaran tertinggi" },
 ] as const;
 
 export const REPORT_COLUMNS = {
