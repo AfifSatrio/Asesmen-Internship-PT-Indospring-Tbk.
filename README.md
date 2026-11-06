@@ -11,11 +11,11 @@ Aplikasi asesmen IT Software untuk mencatat barang masuk/keluar dan menghasilkan
 
 ## Menjalankan dari clone baru
 
-Prasyarat: **Node.js 22.12+ (disarankan Node.js 24 LTS)**, npm, dan **PostgreSQL 16+** yang sudah berjalan. Buat database kosong bernama `indospring` menggunakan pgAdmin atau `createdb indospring` dengan akun PostgreSQL Anda.
+Prasyarat: **Node.js 22.12+**, npm, dan **PostgreSQL 16+** yang sudah berjalan. Buat database kosong bernama `indospring` menggunakan pgAdmin atau `createdb indospring` dengan akun PostgreSQL Anda.
 
 ```bash
-git clone https://github.com/AfifSatrio/Asesmen-Internship-PT-Indospring-Tbk..git
-cd Asesmen-Internship-PT-Indospring-Tbk.
+git clone https://github.com/AfifSatrio/Asesmen-Internship-PT-Indospring-Tbk..git indospring-inventory
+cd indospring-inventory
 npm ci
 cp .env.example .env
 ```
@@ -56,13 +56,23 @@ npm run db:local:stop
 
 Folder `.local` tidak disertakan Git. Pada clone baru, tetap gunakan instalasi PostgreSQL dan alur setup resmi di atas; startup otomatis tidak mengelola PostgreSQL eksternal. Jika komputer di-restart, jalankan kembali `npm run dev` untuk menyalakan cluster lokal yang sudah ada.
 
+## Tampilan dan alur penggunaan
+
+- Navigasi **Transaksi Barang** (`/`) dan **Laporan Stok** (`/laporan`) tersedia melalui sidebar. Tidak ada topbar terpisah.
+- Avatar dan label **Administrator** berada di bawah panel **Pencatatan terpusat** pada sidebar desktop. Label ini hanya tampilan statis, bukan akun atau sistem hak akses.
+- Halaman transaksi menampilkan ringkasan jumlah transaksi, pencarian, filter jenis, dan tabel dengan pagination 20 data per halaman. Ringkasan menghitung seluruh transaksi, tidak mengikuti pencarian/filter daftar.
+- Klik **Tambah Transaksi**, isi nomor, tanggal, jenis, dan kategori, lalu tambahkan barang beserta QTY. Nama barang dan satuan terisi otomatis. Detail dan koreksi dibuka melalui aksi pada tabel.
+- Menghapus baris barang hanya mengubah isian form; menghapus transaksi dari daftar menghapus header beserta seluruh detail setelah konfirmasi.
+- Halaman laporan memiliki filter periode dan tiga tab: **Stok per barang**, **Stok per kelompok**, serta **Pengeluaran tertinggi**.
+- Pada layar kecil, navigasi menyesuaikan lebar layar dan tabel dapat digulir horizontal. Loading, keadaan kosong, pesan gagal, dan tombol **Coba lagi** tersedia untuk pengambilan data.
+
 ## Fitur
 
 - Daftar, pencarian nomor/kategori, filter jenis, detail, tambah, koreksi, dan hapus transaksi.
 - Nomor manual maksimal lima karakter; tidak berubah ketika koreksi.
 - Item dipilih berdasarkan kategori header; nama/satuan otomatis; konfirmasi sebelum perubahan kategori mengosongkan item.
 - Validasi tanggal kalender, field wajib, minimal satu item, nomor unik, barang terdaftar dan sesuai kategori, tidak ada duplikasi barang, QTY integer 1–2.147.483.647.
-- Simpan header dan seluruh detail secara atomik; koreksi memakai isolasi Serializable. Hapus header menghapus detail melalui foreign key CASCADE dalam transaksi database.
+- Simpan header dan seluruh detail secara atomik; tambah dan koreksi memakai isolasi Serializable. Hapus header menghapus detail melalui foreign key CASCADE dalam transaksi database.
 - Konfirmasi hapus, status proses, pencegahan submit berulang, pesan berhasil/gagal.
 - Tiga laporan dengan filter tanggal, default 1 Januari–28 Februari 2021. Agregasi dilakukan di PostgreSQL, parameter tanggal diikat lewat `Prisma.sql`/`$queryRaw`. Ketiga query dibaca dalam snapshot Repeatable Read.
 
@@ -77,6 +87,36 @@ Folder `.local` tidak disertakan Git. Pada clone baru, tetap gunakan instalasi P
 Nama tabel/kolom uppercase sesuai soal dan harus dikutip dengan `"` di PostgreSQL. Tipe varchar, integer, dan date mengikuti soal. `prisma/schema.prisma` menggunakan `@map`/`@@map`. Constraint CHECK jenis transaksi, kategori, dan QTY ada pada `sql/schema.sql`; Prisma tidak merepresentasikan CHECK. Konsistensi kategori header/detail dan minimal satu item divalidasi oleh API dalam transaksi database.
 
 Jawaban SQL mandiri nomor **3.1, 3.2, 3.3** ada di [`sql/reports.sql`](sql/reports.sql), dapat dijalankan langsung di query editor PostgreSQL. Query aplikasi ada di `lib/reports.ts`.
+
+## API
+
+Semua endpoint berada dalam proyek Next.js yang sama dan mengembalikan JSON dengan `Cache-Control: no-store`.
+
+| Metode | Endpoint | Kegunaan |
+| --- | --- | --- |
+| GET | `/api/barang` | Membaca master barang untuk form |
+| GET | `/api/transaksi?page=1&q=&jenis=` | Daftar transaksi dengan pagination, pencarian, dan filter |
+| POST | `/api/transaksi` | Menambah header dan detail transaksi |
+| GET | `/api/transaksi/:nomor` | Memuat satu transaksi beserta detail barang |
+| PUT | `/api/transaksi/:nomor` | Mengoreksi transaksi dengan nomor tetap |
+| DELETE | `/api/transaksi/:nomor` | Menghapus transaksi beserta seluruh detail |
+| GET | `/api/laporan?awal=2021-01-01&akhir=2021-02-28` | Menghasilkan ketiga laporan dalam satu respons |
+
+Contoh body POST/PUT:
+
+```json
+{
+  "nomor": "T001",
+  "tanggal": "2021-01-01",
+  "jenis": "MASUK",
+  "kategori": "SUBMAT",
+  "items": [
+    { "kode": "S001", "qty": 10 }
+  ]
+}
+```
+
+Tanggal `awal` dan `akhir` laporan wajib berupa tanggal kalender `YYYY-MM-DD`, dengan awal tidak melewati akhir. Respons laporan berisi `barang`, `kelompok`, dan `tertinggi`; angka hasil agregasi berupa string desimal. Respons kesalahan memakai bentuk `{ "error": "Pesan kesalahan" }`, dengan status 400 untuk input tidak valid, 404 untuk transaksi tidak ditemukan, 409 untuk nomor ganda/konflik perubahan, dan 500 untuk kegagalan server. Penambahan berhasil mengembalikan status 201.
 
 ## Memasukkan contoh soal
 
@@ -101,61 +141,6 @@ Hasil periode 2021-01-01 sampai 2021-02-28:
 | R002 |     5 |      0 |          5 |
 
 Kelompok: SUBMAT–BOX = **6**, SUBMAT–PCS = **15**, RAWMAT–KG = **10**. Pengeluaran tertinggi: S001 = **4**, S003 = **2**, R001 = **5**.
-
-## Pengujian
-
-```bash
-npm test
-npm run typecheck
-npm run build
-```
-
-Pengujian browser memakai **Google Chrome** terpasang. Untuk Chromium Playwright, ubah `launchOptions.channel` di `playwright.config.ts` dan pasang browser dengan `npx playwright install chromium`.
-
-Gunakan **database pengujian terpisah yang hanya berisi master barang**, jalankan setup di sana dan mulai aplikasi. Tes menolak berjalan bila transaksi sudah ada; tes tidak menghapus data yang sudah ada. Setelah lulus, kelima transaksi contoh tetap tersimpan.
-
-```bash
-# Terminal 1 — .env mengarah ke database pengujian kosong yang sudah di-setup
-npm run dev
-
-# Terminal 2 — macOS/Linux
-E2E_ALLOW_WRITE=1 npm run test:e2e
-# PowerShell: $env:E2E_ALLOW_WRITE="1"; npm run test:e2e
-```
-
-`TEST_BASE_URL` opsional, default `http://127.0.0.1:3000`. Tes memasukkan contoh melalui form, memeriksa hasil ketiga laporan, koreksi/hapus/detail, penolakan input invalid dan nomor ganda, periode kosong/inklusif, nilai tertinggi seri, dan tampilan mobile. Screenshot tersimpan di `docs/screenshots/`.
-
-## Asumsi dan batasan
-
-- `STOK_AKHIR` = masuk − keluar **hanya dalam periode**, tanpa saldo sebelum periode, sesuai contoh soal.
-- Kedua batas tanggal inklusif. Tanggal transaksi adalah tanggal kalender (database `date`), ditampilkan tanpa pergeseran zona waktu.
-- Semua barang muncul pada laporan pertama, termasuk yang bernilai nol. Laporan tertinggi menjumlahkan pengeluaran per barang, menampilkan semua yang seri, dan mengecualikan kelompok tanpa pengeluaran.
-- Kuantitas agregat dikirim API sebagai string desimal untuk menjaga presisi integer besar; UI memformat dengan `BigInt`.
-- Stok negatif belum ditolak, sesuai lingkup wajib. Tidak ada login, pengguna, ekspor, grafik, atau deployment. Jalankan pada lingkungan lokal/tepercaya; API tidak memiliki autentikasi.
-- Nomor peka huruf besar/kecil, hanya huruf ASCII, angka, `_`, `-`; maksimal lima karakter. Koreksi bersamaan dapat menghasilkan konflik 409; muat ulang lalu coba kembali. Tidak ada histori revisi/versioning.
-- Daftar transaksi memakai pagination server 20 baris. Offset pagination dipilih untuk lingkup asesmen; pada volume sangat besar, cursor pagination dapat dievaluasi berdasarkan pengukuran.
-
-## Struktur proyek
-
-```text
-app/                 Halaman dan Route Handlers /api
-components/          Shell navigasi
-lib/                 Prisma, validasi, penyimpanan, SQL laporan
-prisma/schema.prisma Mapping ORM ke tabel soal
-sql/                 Schema, master data, jawaban SQL laporan
-tests/               Unit test dan pengujian end-to-end
-docs/screenshots/    Bukti tampilan dari pengujian browser
-```
-
-## Screenshot
-
-![Form transaksi](docs/screenshots/form-transaksi.png)
-![Daftar transaksi](docs/screenshots/daftar-transaksi.png)
-![Laporan per barang](docs/screenshots/laporan-barang.png)
-![Laporan per kelompok](docs/screenshots/laporan-kelompok.png)
-![Pengeluaran tertinggi](docs/screenshots/laporan-tertinggi.png)
-
-Referensi implementasi: [Next.js Route Handlers](https://nextjs.org/docs/app/getting-started/route-handlers), [Prisma 6 Transactions](https://www.prisma.io/docs/orm/v6/prisma-client/queries/transactions).
 
 ## Komponen UI
 
@@ -185,6 +170,67 @@ npm run db:optimize
 
 Perintah ini menjalankan `sql/optimize-index.sql`: membuat indeks `TRMUTASIHD_TANGGAL_NO_TRANSAKSI_idx` pada `(TANGGAL DESC, NO_TRANSAKSI ASC)` lalu menghapus indeks tanggal tunggal lama. Tidak menghapus transaksi. Setup database baru langsung memakai indeks gabungan tersebut. Prefix tanggal mendukung filter periode dan urutan daftar. Primary key detail `(NO_TRANSAKSI, KODE_BARANG)` sudah mendukung join header-detail dan hitungan item, sehingga tidak ditambahkan indeks `NO_TRANSAKSI` yang redundant. Pencarian substring tidak diberi indeks B-tree yang tidak membantu; ekstensi trigram belum diperlukan untuk lingkup ini. EXPLAIN pada lima transaksi contoh dapat memilih sequential scan karena ukuran tabel kecil; keputusan planner tetap berbasis biaya.
 
+## Pengujian
+
+```bash
+npm test
+npm run typecheck
+npm run build
+```
+
+Pengujian browser memakai **Google Chrome** terpasang. Untuk Chromium Playwright, ubah `launchOptions.channel` di `playwright.config.ts` dan pasang browser dengan `npx playwright install chromium`.
+
+Gunakan **database pengujian terpisah yang hanya berisi master barang**, jalankan setup di sana dan mulai aplikasi. Skenario contoh soal memeriksa bahwa daftar transaksi awal kosong. Suite menulis dan menghapus fixture miliknya, sehingga harus dijalankan pada database pengujian terpisah. Setelah lulus, kelima transaksi contoh tetap tersimpan; gunakan database pengujian kosong baru untuk mengulang seluruh suite.
+
+```bash
+# Terminal 1 — .env mengarah ke database pengujian kosong yang sudah di-setup
+npm run dev
+
+# Terminal 2 — macOS/Linux
+E2E_ALLOW_WRITE=1 npm run test:e2e
+# PowerShell: $env:E2E_ALLOW_WRITE="1"; npm run test:e2e
+```
+
+`TEST_BASE_URL` opsional, default `http://127.0.0.1:3000`. Tes memasukkan contoh melalui form, memeriksa hasil ketiga laporan, koreksi/hapus/detail, penolakan input invalid dan nomor ganda, periode kosong/inklusif, nilai tertinggi seri, dan tampilan mobile. Screenshot tersimpan di `docs/screenshots/`.
+
 Pengujian tambahan `tests/performance.spec.ts` mencakup 25 transaksi dengan tanggal sama, pagination/urutan, parameter invalid, request detail/master, debounce/respons terlambat, pemulihan API gagal, pencegahan submit ulang, input yang bertahan saat gagal, pembaruan laporan setelah tambah/koreksi/hapus, dan layout mobile. Jalankan seluruh suite pada database pengujian kosong sesuai petunjuk sebelumnya. Test menambahkan fixture sementara; data kerja tidak digunakan.
 
 Tidak ada konfigurasi atau script lint pada proyek ini. Pemeriksaan yang tersedia adalah `npm run typecheck`, `npm test`, `npm run test:e2e`, dan `npm run build`; tidak ditambahkan dependensi linter baru.
+
+Catatan hasil pemeriksaan sebelumnya tersedia di [`docs/VERIFIKASI.md`](docs/VERIFIKASI.md).
+
+## Asumsi dan batasan
+
+- `STOK_AKHIR` = masuk − keluar **hanya dalam periode**, tanpa saldo sebelum periode, sesuai contoh soal.
+- Kedua batas tanggal inklusif. Tanggal transaksi adalah tanggal kalender (database `date`), ditampilkan tanpa pergeseran zona waktu.
+- Semua barang muncul pada laporan pertama, termasuk yang bernilai nol. Laporan tertinggi menjumlahkan pengeluaran per barang, menampilkan semua yang seri, dan mengecualikan kelompok tanpa pengeluaran.
+- Kuantitas agregat dikirim API sebagai string desimal untuk menjaga presisi integer besar; UI memformat dengan `BigInt`.
+- Stok negatif belum ditolak, sesuai lingkup wajib. Tidak ada login, pengguna, ekspor, grafik, atau deployment. Jalankan pada lingkungan lokal/tepercaya; API tidak memiliki autentikasi.
+- Nomor peka huruf besar/kecil, hanya huruf ASCII, angka, `_`, `-`; maksimal lima karakter. Koreksi bersamaan dapat menghasilkan konflik 409; muat ulang lalu coba kembali. Tidak ada histori revisi/versioning.
+- Daftar transaksi memakai pagination server 20 baris. Offset pagination dipilih untuk lingkup asesmen; pada volume sangat besar, cursor pagination dapat dievaluasi berdasarkan pengukuran.
+
+## Struktur proyek
+
+```text
+app/                 Halaman dan Route Handlers /api
+components/          Komponen UI terpisah: sidebar, form, tabel, laporan, footer
+data/index.ts        Konstanta konfigurasi komponen UI
+hooks/               State, request, debounce, dan alur transaksi/laporan
+lib/                 Prisma, validasi, penyimpanan, SQL laporan
+prisma/schema.prisma Mapping ORM ke tabel soal
+sql/                 Schema, master data, optimasi indeks, jawaban SQL laporan
+scripts/             Pengelolaan cluster PostgreSQL lokal opsional
+tests/               Unit test dan pengujian end-to-end
+docs/VERIFIKASI.md   Catatan hasil pengujian sebelumnya
+docs/screenshots/    Bukti tampilan dari pengujian browser
+```
+
+## Screenshot
+
+Screenshot berikut merupakan hasil pengujian browser sebelumnya dan dapat masih memperlihatkan topbar sebelum perubahan UI terakhir. Jalankan ulang suite E2E pada database pengujian kosong untuk memperbaruinya.
+
+![Form transaksi](docs/screenshots/form-transaksi.png)
+![Daftar transaksi](docs/screenshots/daftar-transaksi.png)
+![Laporan per barang](docs/screenshots/laporan-barang.png)
+![Laporan per kelompok](docs/screenshots/laporan-kelompok.png)
+![Pengeluaran tertinggi](docs/screenshots/laporan-tertinggi.png)
