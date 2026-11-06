@@ -8,8 +8,8 @@ export function Topbar() {
         {"Sistem Pencatatan Barang"}
       </span>
       <span className="assessment">
-        {"IT SOFTWARE"}
-        <span className="avatar">{"IS"}</span>
+        {"Administrator"}
+        <span className="avatar">{"A"}</span>
       </span>
     </header>
   );
