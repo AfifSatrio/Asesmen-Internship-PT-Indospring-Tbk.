@@ -1,5 +1,13 @@
 "use client";
-
+import {
+  RefreshCw,
+  ArrowDownLeft,
+  ArrowUpRight,
+  Eye,
+  Pencil,
+  Trash2,
+  Package,
+} from "lucide-react";
 import { formatTanggal } from "@/lib/client";
 import { TransactionFilters } from "@/components/transaction-filters";
 import type { TransactionsController } from "@/hooks/use-transactions";
@@ -30,25 +38,22 @@ export function TransactionList({
   | "remove"
 >) {
   return (
-    <section
-      className="card"
-      aria-label="Daftar transaksi"
-      aria-busy={loading || busy}
-    >
+    <section className="card">
       <div className="card-heading">
         <div>
           <h2>
             {"Daftar transaksi"}
             <span className="count">{data.length}</span>
           </h2>
+          <p>{"Riwayat pencatatan barang dalam satu tempat."}</p>
         </div>
         <button
-          className="secondary small"
+          className="icon-button"
           aria-label={"Muat ulang"}
           onClick={load}
           disabled={loading}
         >
-          Muat ulang
+          <RefreshCw size={17} />
         </button>
       </div>
       <TransactionFilters
@@ -57,12 +62,7 @@ export function TransactionList({
         jenis={jenis}
         setJenis={setJenis}
       />{" "}
-      <div
-        className="table-wrap"
-        role="region"
-        aria-label="Tabel transaksi"
-        tabIndex={0}
-      >
+      <div className="table-wrap">
         <table>
           <thead>
             <tr>
@@ -70,7 +70,7 @@ export function TransactionList({
               <th>{"Tanggal"}</th>
               <th>{"Jenis transaksi"}</th>
               <th>{"Kategori"}</th>
-              <th className="right">Jumlah item</th>
+              <th>{"Jumlah item"}</th>
               <th className="right">{"Tindakan"}</th>
             </tr>
           </thead>
@@ -83,13 +83,18 @@ export function TransactionList({
                   <span
                     className={`badge ${t.jenis === "MASUK" ? "in" : "out"}`}
                   >
+                    {t.jenis === "MASUK" ? (
+                      <ArrowDownLeft size={14} />
+                    ) : (
+                      <ArrowUpRight size={14} />
+                    )}{" "}
                     {t.jenis === "MASUK" ? "Masuk" : "Keluar"}
                   </span>
                 </td>
                 <td>
                   <span className="category">{t.kategori}</span>
                 </td>
-                <td className="right">{t.items.length}</td>
+                <td>{`${t.items.length} barang`}</td>
                 <td>
                   <div className="actions">
                     <button
@@ -97,7 +102,7 @@ export function TransactionList({
                       aria-label={`Detail ${t.nomor}`}
                       onClick={() => open("detail", t)}
                     >
-                      Detail
+                      <Eye size={17} />
                     </button>
                     <button
                       title={"Koreksi"}
@@ -105,16 +110,16 @@ export function TransactionList({
                       onClick={() => open("koreksi", t)}
                       disabled={busy}
                     >
-                      Koreksi
+                      <Pencil size={16} />
                     </button>
                     <button
-                      title="Hapus seluruh transaksi"
+                      title={"Hapus"}
                       className="danger-text"
-                      aria-label={`Hapus transaksi ${t.nomor}`}
+                      aria-label={`Hapus ${t.nomor}`}
                       onClick={() => remove(t)}
                       disabled={busy}
                     >
-                      Hapus transaksi
+                      <Trash2 size={16} />
                     </button>
                   </div>
                 </td>
@@ -123,11 +128,10 @@ export function TransactionList({
           </tbody>
         </table>
         {loading ? (
-          <div className="empty" role="status">
-            Memuat transaksi…
-          </div>
+          <div className="empty">{"Memuat transaksi…"}</div>
         ) : visible.length === 0 ? (
           <div className="empty">
+            <Package size={32} />
             <h3>
               {search || jenis
                 ? "Transaksi tidak ditemukan"

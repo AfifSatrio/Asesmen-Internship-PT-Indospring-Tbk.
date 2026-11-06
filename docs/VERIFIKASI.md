@@ -27,7 +27,3 @@ Hasil kelompok: SUBMAT/BOX=6, SUBMAT/PCS=15, RAWMAT/KG=10.
 Pengeluaran tertinggi: S001=4, S003=2, R001=5.
 
 Screenshot berada di `docs/screenshots/`. Pengujian memakai database sementara terpisah; file database dan kredensial tidak disertakan repository. Belum dilakukan uji beban atau uji multi-pengguna skala besar. Tidak ada deployment.
-
-## Pembaruan UI operasional
-
-Build produksi dan lima unit test validasi lulus setelah penyederhanaan UI. Pemeriksaan Chrome pada lebar 1440px dan 390px memastikan header dua menu tanpa sidebar/statistik, form mobile satu kolom, tabel bergulir horizontal tanpa overflow halaman, nama barang otomatis, hapus baris form, navigasi aktif, serta perpindahan tab laporan dengan keyboard (panah dan End) dan fokus yang terlihat. Screenshot desktop/mobile diperbarui di `docs/screenshots/`, termasuk `form-mobile.png`. Pemeriksaan UI ini tidak menyimpan atau menghapus transaksi database.

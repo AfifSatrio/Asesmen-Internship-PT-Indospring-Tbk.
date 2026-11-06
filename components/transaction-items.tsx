@@ -1,6 +1,6 @@
 "use client";
 import { LIMITS } from "@/lib/validation";
-
+import { Plus, Trash2, Package } from "lucide-react";
 import type { TransactionsController } from "@/hooks/use-transactions";
 export function TransactionItems({
   form,
@@ -28,31 +28,20 @@ export function TransactionItems({
               })
             }
           >
+            <Plus size={15} />
             {"Tambah Item"}
           </button>
         )}
       </div>
-      <p className="helper item-hint">
-        Pilih kode barang dan isi QTY. Nama barang serta satuan terisi otomatis.
-      </p>
-      <div
-        className="table-wrap item-table"
-        role="region"
-        aria-label="Rincian barang"
-        tabIndex={0}
-      >
+      <div className="table-wrap item-table">
         <table>
           <thead>
             <tr>
-              <th>Kode barang *</th>
-              <th>
-                Nama barang <span className="auto-label">Otomatis</span>
-              </th>
-              <th>
-                Satuan <span className="auto-label">Otomatis</span>
-              </th>
-              <th className="right">QTY *</th>
-              {!readonly && <th className="right">Baris</th>}
+              <th>{"Kode barang"}</th>
+              <th>{"Nama barang"}</th>
+              <th>{"Satuan"}</th>
+              <th>{"QTY"}</th>
+              {!readonly && <th />}
             </tr>
           </thead>
           <tbody>
@@ -91,12 +80,11 @@ export function TransactionItems({
                         ))}
                     </select>
                   </td>
-                  <td className="automatic-value">{b?.nama || "—"}</td>
-                  <td className="automatic-value">{b?.satuan || "—"}</td>
-                  <td className="right">
+                  <td>{b?.nama || "—"}</td>
+                  <td>{b?.satuan || "—"}</td>
+                  <td>
                     <input
                       aria-label={`QTY ${index + 1}`}
-                      className="quantity-input"
                       type="number"
                       required
                       min={LIMITS.minQuantity}
@@ -116,11 +104,11 @@ export function TransactionItems({
                     />
                   </td>
                   {!readonly && (
-                    <td className="right">
+                    <td>
                       <button
                         type="button"
-                        className="row-remove"
-                        aria-label={`Hapus baris barang ${index + 1}`}
+                        className="icon-button danger-text"
+                        aria-label={`Hapus item ${index + 1}`}
                         onClick={() =>
                           setForm({
                             ...form,
@@ -128,7 +116,7 @@ export function TransactionItems({
                           })
                         }
                       >
-                        Hapus baris
+                        <Trash2 size={16} />
                       </button>
                     </td>
                   )}
@@ -139,6 +127,7 @@ export function TransactionItems({
         </table>
         {!form.items.length && (
           <div className="empty">
+            <Package size={28} />
             <p>{"Belum ada item. Klik Tambah Item untuk memilih barang."}</p>
           </div>
         )}
