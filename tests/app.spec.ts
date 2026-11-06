@@ -89,7 +89,7 @@ test("form CRUD, validasi API, laporan contoh, periode, seri, dan responsif", as
   );
   const before = await request.get("/api/transaksi");
   expect(before.ok()).toBeTruthy();
-  expect(await before.json()).toEqual([]);
+  expect((await before.json()).items).toEqual([]);
   fs.mkdirSync("docs/screenshots", { recursive: true });
   await page.setViewportSize({ width: 1440, height: 1000 });
   await page.goto("/");

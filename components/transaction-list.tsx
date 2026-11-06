@@ -12,7 +12,11 @@ import { formatTanggal } from "@/lib/client";
 import { TransactionFilters } from "@/components/transaction-filters";
 import type { TransactionsController } from "@/hooks/use-transactions";
 export function TransactionList({
-  data,
+  total,
+  page,
+  totalPages,
+  setPage,
+  error,
   loading,
   load,
   search,
@@ -25,7 +29,11 @@ export function TransactionList({
   remove,
 }: Pick<
   TransactionsController,
-  | "data"
+  | "total"
+  | "page"
+  | "totalPages"
+  | "setPage"
+  | "error"
   | "loading"
   | "load"
   | "search"
@@ -43,7 +51,7 @@ export function TransactionList({
         <div>
           <h2>
             {"Daftar transaksi"}
-            <span className="count">{data.length}</span>
+            <span className="count">{total}</span>
           </h2>
           <p>{"Riwayat pencatatan barang dalam satu tempat."}</p>
         </div>
@@ -94,7 +102,7 @@ export function TransactionList({
                 <td>
                   <span className="category">{t.kategori}</span>
                 </td>
-                <td>{`${t.items.length} barang`}</td>
+                <td>{`${t.itemCount} barang`}</td>
                 <td>
                   <div className="actions">
                     <button
@@ -128,7 +136,13 @@ export function TransactionList({
           </tbody>
         </table>
         {loading ? (
-          <div className="empty">{"Memuat transaksi…"}</div>
+          <div className="empty" role="status">
+            Memuat transaksi…
+          </div>
+        ) : error ? (
+          <div className="empty">
+            Daftar belum dapat ditampilkan. Klik Coba lagi untuk memuat ulang.
+          </div>
         ) : visible.length === 0 ? (
           <div className="empty">
             <Package size={32} />
@@ -146,8 +160,26 @@ export function TransactionList({
         ) : null}
       </div>
       <div className="table-footer">
-        {`Menampilkan ${visible.length} dari ${data.length} transaksi`}
-        <span>{"Data tersimpan di database"}</span>
+        {`Menampilkan ${visible.length} dari ${total} transaksi`}
+        <div className="pagination" aria-label="Halaman transaksi">
+          <button
+            className="secondary small"
+            disabled={loading || busy || page <= 1}
+            onClick={() => setPage(page - 1)}
+          >
+            Sebelumnya
+          </button>
+          <span aria-live="polite">
+            Halaman {page} dari {totalPages}
+          </span>
+          <button
+            className="secondary small"
+            disabled={loading || busy || page >= totalPages}
+            onClick={() => setPage(page + 1)}
+          >
+            Berikutnya
+          </button>
+        </div>
       </div>
     </section>
   );

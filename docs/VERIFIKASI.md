@@ -27,3 +27,13 @@ Hasil kelompok: SUBMAT/BOX=6, SUBMAT/PCS=15, RAWMAT/KG=10.
 Pengeluaran tertinggi: S001=4, S003=2, R001=5.
 
 Screenshot berada di `docs/screenshots/`. Pengujian memakai database sementara terpisah; file database dan kredensial tidak disertakan repository. Belum dilakukan uji beban atau uji multi-pengguna skala besar. Tidak ada deployment.
+
+## Optimasi pagination dan request
+
+- TypeScript dan production build: lulus.
+- Unit test: 6 lulus, termasuk validasi pagination dan periode.
+- Empat skenario browser/API lulus: CRUD + laporan contoh; pagination/urutan/detail sesuai kebutuhan; debounce/respons terlambat; serta retry daftar/detail/master/laporan, input tetap ada saat simpan gagal, tombol simpan nonaktif, dan pembaruan laporan setelah tambah/koreksi/hapus.
+- Pengujian browser dijalankan pada database PostgreSQL terpisah. T001–T005 dimasukkan melalui form; 25 fixture tambahan menguji halaman berukuran 20 dan tanggal yang sama. Tampilan mobile 390px tidak menyebabkan overflow halaman; pagination tetap dapat dipakai.
+- SQL mandiri 3.1–3.3 diuji ulang dan tetap sesuai contoh. Query laporan menyaring header periode sebelum agregasi detail. Indeks tanggal/nomor menggantikan indeks tanggal tunggal; daftar indeks berisi tiga primary key dan satu indeks gabungan, tanpa duplikasi primary key.
+- EXPLAIN pada dataset contoh yang kecil memilih sequential scan untuk header, dan menggunakan primary key detail untuk join. Tidak dipaksakan penggunaan indeks atau diklaim hasil benchmark beban besar.
+- Tidak ada script/konfigurasi lint pada proyek, sehingga lint tidak dijalankan. Tidak ditambahkan library performa atau lint.

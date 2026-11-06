@@ -53,3 +53,25 @@ export const periodeSchema = z
   .refine((v) => v.awal <= v.akhir, {
     message: "Tanggal awal tidak boleh melewati tanggal akhir.",
   });
+
+export const PAGE_SIZE = 20;
+export const paginationSchema = z
+  .object({
+    page: z
+      .string()
+      .regex(/^[1-9]\d*$/, "Halaman harus bilangan bulat positif.")
+      .transform(Number)
+      .refine(
+        (v) => Number.isSafeInteger(v) && v <= 1000000,
+        "Nomor halaman terlalu besar.",
+      )
+      .default(1),
+    pageSize: z.literal("20", { error: "Ukuran halaman harus 20." }).optional(),
+    q: z.string().trim().max(50, "Pencarian maksimal 50 karakter.").default(""),
+    jenis: z
+      .enum(["", ...TRANSACTION_TYPES], {
+        error: "Filter jenis transaksi tidak valid.",
+      })
+      .default(""),
+  })
+  .strict();

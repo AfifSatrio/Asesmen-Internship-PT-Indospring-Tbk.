@@ -1,14 +1,18 @@
 import { Prisma } from "@prisma/client";
 import { db } from "./db";
 export async function reports(awal: string, akhir: string) {
-  const cte = Prisma.sql`WITH stok AS (
- SELECT b."KODE_BARANG", b."NAMA_BARANG", b."SATUAN", b."KATEGORI",
+  const cte = Prisma.sql`WITH mutasi AS (
+ SELECT d."KODE_BARANG",
  COALESCE(SUM(d."QTY") FILTER (WHERE h."JENIS_TRANSAKSI" = 'MASUK'), 0)::bigint AS "TRANS_MASUK",
  COALESCE(SUM(d."QTY") FILTER (WHERE h."JENIS_TRANSAKSI" = 'KELUAR'), 0)::bigint AS "TRANS_KELUAR"
- FROM "MSBARANG" b
- LEFT JOIN "TRMUTASIDT" d ON d."KODE_BARANG" = b."KODE_BARANG"
- LEFT JOIN "TRMUTASIHD" h ON h."NO_TRANSAKSI" = d."NO_TRANSAKSI" AND h."TANGGAL" BETWEEN ${awal}::date AND ${akhir}::date
- GROUP BY b."KODE_BARANG", b."NAMA_BARANG", b."SATUAN", b."KATEGORI"
+ FROM "TRMUTASIHD" h JOIN "TRMUTASIDT" d ON d."NO_TRANSAKSI" = h."NO_TRANSAKSI"
+ WHERE h."TANGGAL" BETWEEN ${awal}::date AND ${akhir}::date
+ GROUP BY d."KODE_BARANG"
+ ), stok AS (
+ SELECT b."KODE_BARANG", b."NAMA_BARANG", b."SATUAN", b."KATEGORI",
+ COALESCE(m."TRANS_MASUK", 0)::bigint AS "TRANS_MASUK",
+ COALESCE(m."TRANS_KELUAR", 0)::bigint AS "TRANS_KELUAR"
+ FROM "MSBARANG" b LEFT JOIN mutasi m ON m."KODE_BARANG" = b."KODE_BARANG"
  )`;
   const [barang, kelompok, tertinggi] = await db.$transaction(
     [

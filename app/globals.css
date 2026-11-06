@@ -947,3 +947,28 @@ fieldset {
     display: none;
   }
 }
+
+.pagination {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.pagination span {
+  display: inline;
+  white-space: nowrap;
+}
+.table-footer {
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+@media (max-width: 760px) {
+  .pagination {
+    width: 100%;
+    justify-content: space-between;
+    gap: 6px;
+  }
+  .pagination span {
+    display: inline;
+  }
+}

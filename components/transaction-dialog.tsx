@@ -13,6 +13,9 @@ export function TransactionDialog({
   formError,
   save,
   barang,
+  detailLoading,
+  detailError,
+  retryDetail,
 }: Pick<
   TransactionsController,
   | "mode"
@@ -23,6 +26,9 @@ export function TransactionDialog({
   | "formError"
   | "save"
   | "barang"
+  | "detailLoading"
+  | "detailError"
+  | "retryDetail"
 >) {
   const dialog = useRef<HTMLDialogElement>(null);
   const readonly = mode === "detail";
@@ -39,7 +45,7 @@ export function TransactionDialog({
       }}
       className="transaction-dialog"
     >
-      <form onSubmit={save}>
+      <form onSubmit={save} aria-busy={busy || detailLoading}>
         <div className="dialog-heading">
           <div>
             <div className="eyebrow">{"TRANSAKSI BARANG"}</div>
@@ -67,12 +73,28 @@ export function TransactionDialog({
           </button>
         </div>
         <div className="dialog-body">
+          {detailLoading && (
+            <div className="empty" role="status">
+              Memuat data transaksi…
+            </div>
+          )}
+          {detailError && (
+            <div className="alert error" role="alert">
+              {detailError}
+              <button type="button" onClick={retryDetail}>
+                Coba lagi
+              </button>
+            </div>
+          )}
           {formError && (
             <div className="alert error" role="alert">
               {formError}
             </div>
           )}
-          <fieldset disabled={busy || readonly}>
+          <fieldset
+            hidden={detailLoading || !!detailError}
+            disabled={busy || readonly || detailLoading || !!detailError}
+          >
             <TransactionFields form={form} setForm={setForm} mode={mode} />
             <TransactionItems
               form={form}
@@ -100,7 +122,11 @@ export function TransactionDialog({
             {readonly ? "Tutup" : "Batal"}
           </button>
           {!readonly && (
-            <button className="primary" type="submit" disabled={busy}>
+            <button
+              className="primary"
+              type="submit"
+              disabled={busy || detailLoading || !!detailError}
+            >
               <Save size={17} />
               {busy ? "Menyimpan…" : "Simpan Transaksi"}
             </button>

@@ -1,11 +1,11 @@
 "use client";
 import { ArrowLeftRight, ArrowDownLeft, ArrowUpRight } from "lucide-react";
-import type { Transaksi } from "@/lib/client";
+import type { TransactionSummary } from "@/lib/client";
 export function TransactionStats({
-  data,
+  summary,
   loading,
 }: {
-  data: Transaksi[];
+  summary: TransactionSummary | null;
   loading: boolean;
 }) {
   return (
@@ -16,7 +16,7 @@ export function TransactionStats({
         </span>
         <div>
           <p>{"Total transaksi"}</p>
-          <strong>{loading ? "—" : data.length}</strong>
+          <strong>{loading || !summary ? "—" : summary.total}</strong>
           <small>{"Seluruh transaksi tercatat"}</small>
         </div>
       </div>
@@ -26,9 +26,7 @@ export function TransactionStats({
         </span>
         <div>
           <p>{"Transaksi masuk"}</p>
-          <strong>
-            {loading ? "—" : data.filter((t) => t.jenis === "MASUK").length}
-          </strong>
+          <strong>{loading || !summary ? "—" : summary.masuk}</strong>
           <small>{"Penerimaan barang"}</small>
         </div>
       </div>
@@ -38,9 +36,7 @@ export function TransactionStats({
         </span>
         <div>
           <p>{"Transaksi keluar"}</p>
-          <strong>
-            {loading ? "—" : data.filter((t) => t.jenis === "KELUAR").length}
-          </strong>
+          <strong>{loading || !summary ? "—" : summary.keluar}</strong>
           <small>{"Pengeluaran barang"}</small>
         </div>
       </div>

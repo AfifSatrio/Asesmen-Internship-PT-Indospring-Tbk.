@@ -24,7 +24,7 @@ model Transaksi {
   kategori String   @map("KATEGORI") @db.VarChar(10)
   items    Detail[]
 
-  @@index([tanggal])
+  @@index([tanggal(sort: Desc), nomor(sort: Asc)], map: "TRMUTASIHD_TANGGAL_NO_TRANSAKSI_idx")
   @@map("TRMUTASIHD")
 }
 

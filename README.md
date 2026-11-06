@@ -133,7 +133,7 @@ E2E_ALLOW_WRITE=1 npm run test:e2e
 - Kuantitas agregat dikirim API sebagai string desimal untuk menjaga presisi integer besar; UI memformat dengan `BigInt`.
 - Stok negatif belum ditolak, sesuai lingkup wajib. Tidak ada login, pengguna, ekspor, grafik, atau deployment. Jalankan pada lingkungan lokal/tepercaya; API tidak memiliki autentikasi.
 - Nomor peka huruf besar/kecil, hanya huruf ASCII, angka, `_`, `-`; maksimal lima karakter. Koreksi bersamaan dapat menghasilkan konflik 409; muat ulang lalu coba kembali. Tidak ada histori revisi/versioning.
-- Daftar transaksi dimuat penuh; pagination merupakan pengembangan untuk volume besar.
+- Daftar transaksi memakai pagination server 20 baris. Offset pagination dipilih untuk lingkup asesmen; pada volume sangat besar, cursor pagination dapat dievaluasi berdasarkan pengukuran.
 
 ## Struktur proyek
 
@@ -166,3 +166,25 @@ import { TransactionDialog } from "@/components/transaction-dialog";
 ```
 
 Konstanta konfigurasi komponen (navigasi, pilihan form, tab, kolom, dan label laporan) berada di `data/index.ts` dan diimpor melalui `@/data`. Komponen UI tetap berada di file `.tsx` masing-masing. Teks tampilan dan state tetap pada komponen atau hook terkait. Batas input, kategori, dan jenis transaksi bersama didefinisikan di `lib/validation.ts` agar frontend dan backend tetap konsisten.
+
+## Pagination, pemuatan data, dan indeks
+
+- `GET /api/transaksi?page=1&q=T001&jenis=MASUK` mengembalikan `{ items, page, pageSize, total, totalPages, summary }`. Ukuran halaman tetap **20**. Parameter halaman harus integer positif (maksimal 1.000.000), `q` maksimal 50 karakter, `jenis` kosong/MASUK/KELUAR. Parameter tidak dikenal/berulang ditolak. Halaman yang melebihi akhir dinormalisasi ke halaman terakhir, termasuk setelah penghapusan.
+- Urutan daftar selalu `TANGGAL DESC, NO_TRANSAKSI ASC`; nomor unik memecahkan urutan tanggal yang sama. Total, daftar, dan ringkasan dibaca dalam transaksi Repeatable Read. Ringkasan global tetap dihitung dari agregasi header, bukan dari 20 baris halaman aktif.
+- Respons daftar hanya berisi nomor, tanggal, jenis, kategori, dan jumlah item. `GET /api/transaksi/:nomor` dipanggil saat detail/koreksi dibuka. Master barang dimuat saat form tambah/koreksi memerlukannya, dipakai ulang selama halaman aktif, dan tidak dimuat ulang setelah setiap penyimpanan.
+- Pencarian di server memakai debounce 300 ms. Request lama dibatalkan dengan AbortController; penanda urutan juga menjaga agar respons lama tidak mengganti daftar, detail, atau laporan terbaru. Loading, error, keadaan kosong, dan retry tersedia. Gagal menyimpan tetap mempertahankan seluruh input.
+- Setelah mutasi berhasil, halaman daftar aktif dan ringkasan dimuat ulang. Laporan diambil ulang saat halaman laporan dibuka; laporan yang masih terpasang juga mendengarkan event perubahan dan pemulihan browser back/forward cache. Request/response transaksi dan laporan memakai `no-store`, tanpa cache hasil transaksi di server.
+- Laporan menggunakan SQL parameterized dan menjumlahkan detail hanya dari header dalam periode. Semua master barang tetap muncul melalui LEFT JOIN. Ketiga agregasi laporan dibaca dalam snapshot Repeatable Read, dengan hasil bigint diserialisasi sebagai string.
+- Instance Prisma dibagi melalui modul `lib/db.ts` dan global proses, termasuk mode produksi. Route Handler tidak membuat client/koneksi baru atau memanggil disconnect per request.
+
+Untuk **database yang sudah ada**, jalankan sekali (aman diulang):
+
+```bash
+npm run db:optimize
+```
+
+Perintah ini menjalankan `sql/optimize-index.sql`: membuat indeks `TRMUTASIHD_TANGGAL_NO_TRANSAKSI_idx` pada `(TANGGAL DESC, NO_TRANSAKSI ASC)` lalu menghapus indeks tanggal tunggal lama. Tidak menghapus transaksi. Setup database baru langsung memakai indeks gabungan tersebut. Prefix tanggal mendukung filter periode dan urutan daftar. Primary key detail `(NO_TRANSAKSI, KODE_BARANG)` sudah mendukung join header-detail dan hitungan item, sehingga tidak ditambahkan indeks `NO_TRANSAKSI` yang redundant. Pencarian substring tidak diberi indeks B-tree yang tidak membantu; ekstensi trigram belum diperlukan untuk lingkup ini. EXPLAIN pada lima transaksi contoh dapat memilih sequential scan karena ukuran tabel kecil; keputusan planner tetap berbasis biaya.
+
+Pengujian tambahan `tests/performance.spec.ts` mencakup 25 transaksi dengan tanggal sama, pagination/urutan, parameter invalid, request detail/master, debounce/respons terlambat, pemulihan API gagal, pencegahan submit ulang, input yang bertahan saat gagal, pembaruan laporan setelah tambah/koreksi/hapus, dan layout mobile. Jalankan seluruh suite pada database pengujian kosong sesuai petunjuk sebelumnya. Test menambahkan fixture sementara; data kerja tidak digunakan.
+
+Tidak ada konfigurasi atau script lint pada proyek ini. Pemeriksaan yang tersedia adalah `npm run typecheck`, `npm test`, `npm run test:e2e`, dan `npm run build`; tidak ditambahkan dependensi linter baru.

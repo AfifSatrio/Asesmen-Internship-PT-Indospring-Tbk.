@@ -6,7 +6,7 @@ import { ReportTabs } from "@/components/report-tabs";
 import { ReportTable } from "@/components/report-table";
 export function ReportWorkspace() {
   const controller = useReports();
-  const { tab, setTab, error } = controller;
+  const { tab, setTab, error, loading, load, awal, akhir } = controller;
   return (
     <>
       {" "}
@@ -29,6 +29,9 @@ export function ReportWorkspace() {
       {error && (
         <div role="alert" className="alert error">
           {error}
+          <button disabled={loading} onClick={() => load(awal, akhir)}>
+            Coba lagi
+          </button>
         </div>
       )}
       <div className="info-note">

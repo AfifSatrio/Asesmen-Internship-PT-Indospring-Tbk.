@@ -6,7 +6,7 @@ import { TransactionList } from "@/components/transaction-list";
 import { TransactionDialog } from "@/components/transaction-dialog";
 export function TransactionWorkspace() {
   const controller = useTransactions();
-  const { data, loading, error, success, load, open } = controller;
+  const { summary, loading, error, success, load, open } = controller;
   return (
     <>
       {" "}
@@ -26,7 +26,7 @@ export function TransactionWorkspace() {
           {"Tambah Transaksi"}
         </button>
       </div>
-      <TransactionStats data={data} loading={loading} />{" "}
+      <TransactionStats summary={summary} loading={loading} />{" "}
       {error && (
         <div role="alert" className="alert error">
           {error} <button onClick={load}>{"Coba lagi"}</button>

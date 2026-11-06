@@ -4,6 +4,7 @@ import {
   transaksiSchema,
   periodeSchema,
   tanggalSchema,
+  paginationSchema,
 } from "../lib/validation";
 const valid = {
   nomor: "T001",
@@ -72,4 +73,26 @@ test("validasi kalender dan periode inklusif", () => {
       .success,
     false,
   );
+});
+
+test("pagination default dan parameter invalid", () => {
+  assert.equal(paginationSchema.parse({}).page, 1);
+  assert.equal(
+    paginationSchema.parse({
+      page: "2",
+      pageSize: "20",
+      q: " klip ",
+      jenis: "MASUK",
+    }).q,
+    "klip",
+  );
+  for (const page of ["0", "-1", "1.5", "abc", "", "1000001", "1e2"])
+    assert.equal(paginationSchema.safeParse({ page }).success, false);
+  for (const patch of [
+    { pageSize: "100" },
+    { jenis: "LAIN" },
+    { q: "a".repeat(51) },
+    { unknown: "x" },
+  ])
+    assert.equal(paginationSchema.safeParse(patch).success, false);
 });
